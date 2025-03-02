@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>resources/icon/auto_stories_24dp_1F1F1F.svg</file>
+        <file>resources/icon/autorenew_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/chevron_left_24dp_1F1F1F.svg</file>
+        <file>resources/icon/chevron_right_24dp_1F1F1F.svg</file>
+        <file>resources/icon/compare_24dp_1F1F1F.svg</file>
+        <file>resources/icon/delete_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/fast_forward_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/fast_rewind_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/find_in_page_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/first_page_24dp_1F1F1F.svg</file>
+        <file>resources/icon/folder_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/folder_open_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/help_outline_24dp_1F1F1F.svg</file>
+        <file>resources/icon/last_page_24dp_1F1F1F.svg</file>
+        <file>resources/icon/list_24dp_1F1F1F.svg</file>
+        <file>resources/icon/menu_book_24dp_1F1F1F.svg</file>
+        <file>resources/icon/settings_24dp_1F1F1F.svg</file>
+        <file>resources/icon/settings_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/skip_next_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/skip_previous_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/zoom_in_24dp_1F1F1F.svg</file>
+        <file>resources/icon/zoom_out_24dp_1F1F1F.svg</file>
+        <file>resources/icon/zoom_out_map_24dp_1F1F1F.svg</file>
+        <file>resources/icon/rotate_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/rotate_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/screen_rotation_alt_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+    </qresource>
+</RCC>

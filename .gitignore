@@ -1,0 +1,13 @@
+﻿Release/
+Debug/
+x64/
+.vs/
+SzViewer/
+*.user
+*.suo
+*.aps
+*.vcxproj.user
+*.qmake.stash
+/SzViewer.vcxproj.filters
+/TextSettingProps.json
+/*.json
