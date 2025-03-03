@@ -22,7 +22,7 @@ AboutDialog::AboutDialog(QWidget* parent)
         ← → : 페이지 좌우 이동<br>
         PgUp, PgDn : 폴더내 다음 파일, 이전 파일<br>
         Del : 파일 삭제<br>
-        현재 *.txt (UTF-8)만 지원합니다.<br>
+        현재 *.txt 만 지원합니다.<br>
         </p>
         
 
@@ -51,7 +51,7 @@ AboutDialog::AboutDialog(QWidget* parent)
 
 
     const QString aboutText = R"(
-        <p><b>작성자</b> : 황재식<br>
+        <p><b>작성자</b> : szJs<br>
         <b>이메일</b> : <a href="mailto:sizz.js@gmail.com">sizz.js@gmail.com</a></p>
         <b>버전</b> : 0.2.1 (2025.03.03)</p>
         <p><b>Icons</b><br>

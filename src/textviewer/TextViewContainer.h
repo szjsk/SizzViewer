@@ -1,5 +1,6 @@
 #ifndef TEXTVIEWCONTAINER_H
 #define TEXTVIEWCONTAINER_H
+
 #include <QWidget>
 #include <QTextBrowser>
 #include "TextSettingProps.h"
@@ -17,7 +18,6 @@
 #include <QTimer>
 #include <QSlider>
 #include <QLabel>
-
 #include <QFileInfo>
 #include <QDir>
 #include <QCollator>
@@ -61,7 +61,6 @@ public:
     void refreshPage(long textPosition);
     void changeStyle(TextSettingProps s);
 
-
 private:
     QHash<long, PageInfo> calculatePage(const FileInfo* fileInfo, int maxLine, int maxWidth, QTextBrowser* browser);
     QTextBrowser* createTextBrowser(TextSettingProps settings); //텍스트뷰 생성
@@ -74,6 +73,7 @@ private:
     void saveHistory(HistoryProps& history, const FileInfo* fileInfo);
     SavedFileInfo loadHistory(HistoryProps history, QString filePath);
     void testText();
+	bool isUtf8Text(QByteArray& data);
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);

@@ -67,6 +67,43 @@ QTextBrowser* TextViewContainer::createTextBrowser(TextSettingProps settings) {
 	return tb;
 }
 
+bool TextViewContainer::isUtf8Text(QByteArray& data) {
+
+	// 인코딩 감지
+	bool isUtf8 = true;
+	int length = qMin(1000, data.size());
+	for (int i = 0; i < length; ++i) {
+		if ((data[i] & 0x80) == 0x00) {
+			// 0xxxxxxx
+			continue;
+		}
+		else if ((data[i] & 0xE0) == 0xC0) {
+			// 110xxxxx 10xxxxxx
+			if (i + 1 < data.size() && (data[i + 1] & 0xC0) == 0x80) {
+				++i;
+				continue;
+			}
+		}
+		else if ((data[i] & 0xF0) == 0xE0) {
+			// 1110xxxx 10xxxxxx 10xxxxxx
+			if (i + 2 < data.size() && (data[i + 1] & 0xC0) == 0x80 && (data[i + 2] & 0xC0) == 0x80) {
+				i += 2;
+				continue;
+			}
+		}
+		else if ((data[i] & 0xF8) == 0xF0) {
+			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+			if (i + 3 < data.size() && (data[i + 1] & 0xC0) == 0x80 && (data[i + 2] & 0xC0) == 0x80 && (data[i + 3] & 0xC0) == 0x80) {
+				i += 3;
+				continue;
+			}
+		}
+		isUtf8 = false;
+		break;
+	}
+	return isUtf8;
+}
+
 void TextViewContainer::initTextFile(QString filePath) {
 	QFile file(filePath);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -78,8 +115,16 @@ void TextViewContainer::initTextFile(QString filePath) {
 	m_fileInfo = TextViewContainer::FileInfo();
 	SavedFileInfo history = StatusStore::instance().getTextHistory().getFileInfo(filePath);
 
-	QTextStream in(&file);
-	m_fileInfo.text = in.readAll();
+	QByteArray data = file.readAll();
+
+	if (isUtf8Text(data)) {
+		m_fileInfo.text = QString::fromUtf8(data);
+	}
+	else {
+		m_fileInfo.text = QString::fromLocal8Bit(data);
+	}
+
+
 	m_fileInfo.fileName = QFileInfo(filePath).fileName();
 	m_fileInfo.fileNameWithPath = filePath;
 	m_fileInfo.currentPageIdx = 0;
