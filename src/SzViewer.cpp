@@ -249,7 +249,34 @@ void SzViewer::dropEvent(QDropEvent* event)
 }
 
 void SzViewer::openFile(QString fileName) {
+
 	QString findFileName = FileUtils::findFileInSubDir(fileName);
+	ZipArchiveManager& zipManager = ZipArchiveManager::instance();
+
+	if (FileUtils::isSupportSuffix(fileName, FileUtils::ZIP)) {
+		zipManager.openArchive(fileName);
+		bool isImage = false;
+		bool isText = false;
+		for (int i = 0; i < zipManager.getFileList().size(); i++) {
+			QString fileName = zipManager.getFileList().at(i);
+			if (FileUtils::isSupportSuffix(fileName, FileUtils::IMAGE)) {
+				isImage = true;
+			}
+			else if (FileUtils::isSupportSuffix(fileName, FileUtils::TEXT)) {
+				isText = true;
+			}
+
+			if (isImage && isText) {
+				break;
+			}
+		}
+		if (!isImage && !isText) {
+			QMessageBox::warning(this, "warning", "wrong zip file. " + fileName);
+			return;
+		}
+		findFileName = zipManager.getFileList().at(0);
+	}
+
 
 	if (FileUtils::isSupportSuffix(findFileName, FileUtils::IMAGE)) {
 		// 예: 이미지 파일을 처리하는 로직 추가
@@ -259,7 +286,7 @@ void SzViewer::openFile(QString fileName) {
 	}
 	else if (FileUtils::isSupportSuffix(findFileName, FileUtils::TEXT)) {
 		changeVisible(false);
-		ui_textViewContainer->initTextFile(findFileName);
+		ui_textViewContainer->initTextFile(findFileName , FileUtils::None);
 	}
 	else {
 		QMessageBox::warning(this, "warning", "can not support image/text file. " + fileName);

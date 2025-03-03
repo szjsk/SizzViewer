@@ -11,6 +11,7 @@
 #include "imageviewer/ImageToolbar.h"
 #include "common/HistoryCheckBoxItem.h"
 #include "common/FileUtils.h"
+#include "common/ZipArchiveManager.h"
 
 #include <QStackedWidget>
 #include <QSettings>

@@ -8,32 +8,32 @@ ImageToolBar::ImageToolBar(QWidget* parent, ImageViewContainer* container)
 
     QAction* move1Action = new QAction(QIcon(":/icon/resources/icon/fast_rewind_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), "<<<", this);
     move1Action->setToolTip("prev folder (PAGE UP)");
-    connect(move1Action, &QAction::triggered, this, [this, container]() {move(container, ImageViewContainer::MoveMode::PrevFolder);});
+    connect(move1Action, &QAction::triggered, this, [this, container]() {move(container, FileUtils::MoveMode::PrevFolder);});
     this->addAction(move1Action);
 
     QAction* move2Action = new QAction(QIcon(":/icon/resources/icon/skip_previous_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), "<<", this);
     move2Action->setToolTip("first file");
-    connect(move2Action, &QAction::triggered, this, [this, container]() {move(container, ImageViewContainer::MoveMode::First);});
+    connect(move2Action, &QAction::triggered, this, [this, container]() {move(container, FileUtils::MoveMode::First);});
     this->addAction(move2Action);
 
     QAction* move3Action = new QAction(QIcon(":/icon/resources/icon/chevron_left_24dp_1F1F1F.svg"), "<", this);
     move3Action->setToolTip("prev file (<-)");
-    connect(move3Action, &QAction::triggered, this, [this, container]() {move(container, ImageViewContainer::MoveMode::Prev);});
+    connect(move3Action, &QAction::triggered, this, [this, container]() {move(container, FileUtils::MoveMode::Prev);});
     this->addAction(move3Action);
 
     QAction* move4Action = new QAction(QIcon(":/icon/resources/icon/chevron_right_24dp_1F1F1F.svg"), ">", this);
     move4Action->setToolTip("next file (->)");
-    connect(move4Action, &QAction::triggered, this, [this, container]() {move(container, ImageViewContainer::MoveMode::Next);});
+    connect(move4Action, &QAction::triggered, this, [this, container]() {move(container, FileUtils::MoveMode::Next);});
     this->addAction(move4Action);
 
     QAction* move5Action = new QAction(QIcon(":/icon/resources/icon/skip_next_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), ">>", this);
     move5Action->setToolTip("last file");
-    connect(move5Action, &QAction::triggered, this, [this, container]() {move(container, ImageViewContainer::MoveMode::Last);});
+    connect(move5Action, &QAction::triggered, this, [this, container]() {move(container, FileUtils::MoveMode::Last);});
     this->addAction(move5Action);
 
     QAction* move6Action = new QAction(QIcon(":/icon/resources/icon/fast_forward_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), ">>>", this);
     move6Action->setToolTip("next folder (PAGE DOWN)");
-    connect(move6Action, &QAction::triggered, this, [this, container]() {move(container, ImageViewContainer::MoveMode::NextFolder);});
+    connect(move6Action, &QAction::triggered, this, [this, container]() {move(container, FileUtils::MoveMode::NextFolder);});
     this->addAction(move6Action);
 
     QComboBox* scaleModeAction = new QComboBox(this);
@@ -126,8 +126,8 @@ ImageToolBar::ImageToolBar(QWidget* parent, ImageViewContainer* container)
 
 }
 
-void ImageToolBar::move(ImageViewContainer* container, ImageViewContainer::MoveMode mode) {
-    if (mode == ImageViewContainer::MoveMode::NextFolder || mode == ImageViewContainer::MoveMode::PrevFolder) {
+void ImageToolBar::move(ImageViewContainer* container, FileUtils::MoveMode mode) {
+    if (mode == FileUtils::MoveMode::NextFolder || mode == FileUtils::MoveMode::PrevFolder) {
         container->navigateToFolder(mode);
     }
     else {

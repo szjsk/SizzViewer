@@ -19,22 +19,13 @@
 #include "ImageView.h"
 #include "ImageSettingProps.h"
 #include "../common/StatusStore.h"
+#include "../common/FileUtils.h"
 
 class ImageViewContainer : public QWidget
 {
     Q_OBJECT
 
 public:
-
-	enum MoveMode {
-		None,
-		Next,
-		Last,
-		NextFolder,
-		Prev,
-		First,
-		PrevFolder
-	};
 
 	struct ImageListInfo {
 		QStringList fileList;
@@ -52,8 +43,8 @@ public:
 	~ImageViewContainer();
 	void loadFileList(QString filePath);
 	bool changeSplitView();
-	void navigateToFile(MoveMode moveMode);
-	void navigateToFolder(MoveMode moveMode);
+	void navigateToFile(FileUtils::MoveMode moveMode);
+	void navigateToFolder(FileUtils::MoveMode moveMode);
 	void resizeImage(ImageView::ScaleMode scaleMode, std::optional<bool> isPlus = std::nullopt);
 	void deleteImageFile();
 	void clear();

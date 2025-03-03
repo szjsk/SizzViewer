@@ -112,12 +112,16 @@
       <QtMocFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).moc</QtMocFileName>
     </ClCompile>
     <ClCompile Include="src\textviewer\TextViewContainer.cpp" />
+    <ClCompile Include="src\common\ZipArchiveManager.cpp" />
+    <ClCompile Include="src\thirdparty\miniz\miniz.c" />
     <QtMoc Include="src\SzViewer.h" />
     <ClCompile Include="src\common\StatusStore.cpp" />
     <ClCompile Include="src\SzViewer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\common\ZipArchiveManager.h" />
+    <ClInclude Include="src\thirdparty\miniz\miniz.h" />
     <QtMoc Include="src\common\DeleteFilesDialog.h" />
     <QtMoc Include="src\common\HistoryCheckBoxItem.h" />
     <ClInclude Include="src\common\FileUtils.h" />

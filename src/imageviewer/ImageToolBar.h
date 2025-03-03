@@ -17,7 +17,7 @@ public:
     explicit ImageToolBar(QWidget* parent = nullptr, ImageViewContainer* container = nullptr);
 
 private:
-	void move(ImageViewContainer* container, ImageViewContainer::MoveMode mode);
+	void move(ImageViewContainer* container, FileUtils::MoveMode mode);
 	void openSettingDialog(ImageViewContainer* container);
 
 private slots:

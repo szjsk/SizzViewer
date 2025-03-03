@@ -16,7 +16,7 @@ TextToolBar::TextToolBar(QWidget* parent, TextViewContainer* textViewContainer)
 	QAction* move2Action = new QAction(QIcon(":/icon/resources/icon/skip_previous_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), "<<", this);
 	move2Action->setToolTip("prev file (page up)");
 	connect(move2Action, &QAction::triggered, this, [this, textViewContainer]() {
-		textViewContainer->initTextFile(textViewContainer->getFileInfo()->prevFile);
+		textViewContainer->initTextFile(textViewContainer->getFileInfo()->fileName, FileUtils::MoveMode::Prev);
 		});
 	this->addAction(move2Action);
 
@@ -37,7 +37,7 @@ TextToolBar::TextToolBar(QWidget* parent, TextViewContainer* textViewContainer)
 	QAction* move5Action = new QAction(QIcon(":/icon/resources/icon/skip_next_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), ">>", this);
 	move5Action->setToolTip("next file(page down)");
 	connect(move5Action, &QAction::triggered, this, [this, textViewContainer]() {
-		textViewContainer->initTextFile(textViewContainer->getFileInfo()->nextFile);
+		textViewContainer->initTextFile(textViewContainer->getFileInfo()->fileName, FileUtils::MoveMode::Next);
 
 		});
 	this->addAction(move5Action);

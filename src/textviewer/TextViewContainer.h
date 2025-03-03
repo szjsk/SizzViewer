@@ -34,43 +34,39 @@ public:
         QVector<QString> lines;
     };
 
-    struct FileInfo {
+    struct TextFileInfo {
 		QString fileName;
-        QString fileNameWithPath;
         int currentPageIdx;
         long currentPosition;
-        QStringList fileList;
-		QString nextFile;
-		QString prevFile;
         QString text;
         QHash<long, PageInfo> pageInfos;
     };
 
     TextViewContainer(QWidget* parent = nullptr);
     ~TextViewContainer();
-    void initTextFile(QString filePath);
-    void nextPage(const FileInfo* fileInfo);
-    void prevPage(const FileInfo* fileInfo);
+    void initTextFile(QString filePath, FileUtils::MoveMode moveMode);
+    void nextPage(const TextFileInfo* fileInfo);
+    void prevPage(const TextFileInfo* fileInfo);
     bool changeSplitView();
     void findPage(const QString&, long page, long line);
-	void deleteFile(const FileInfo* fileInfo);
+	void deleteFile(const TextFileInfo* fileInfo);
 	void clear();
-    int findTextPageBy(const FileInfo* fileInfo, long position);
-    const FileInfo* getFileInfo();
-    void performSearch(QString searchText, const FileInfo* fileInfo);
+    int findTextPageBy(const TextFileInfo* fileInfo, long position);
+    const TextFileInfo* getFileInfo();
+    void performSearch(QString searchText, const TextFileInfo* fileInfo);
     void refreshPage(long textPosition);
     void changeStyle(TextSettingProps s);
 
 private:
-    QHash<long, PageInfo> calculatePage(const FileInfo* fileInfo, int maxLine, int maxWidth, QTextBrowser* browser);
+    QHash<long, PageInfo> calculatePage(const TextFileInfo* fileInfo, int maxLine, int maxWidth, QTextBrowser* browser);
     QTextBrowser* createTextBrowser(TextSettingProps settings); //텍스트뷰 생성
     int getMaxHeight(QTextBrowser* tb);
     int getMaxWidth(QTextBrowser* tb);
     int getFontWidth(QFontMetrics* tb, QChar c);
-    int setPage(FileInfo* fileInfo, int newPageIdx);
+    int setPage(TextFileInfo* fileInfo, int newPageIdx);
     void refreshStyle(TextSettingProps settings, QTextBrowser* tb);
     void applyLineSpacing(QTextBrowser* tb);
-    void saveHistory(HistoryProps& history, const FileInfo* fileInfo);
+    void saveHistory(HistoryProps& history, const TextFileInfo* fileInfo);
     SavedFileInfo loadHistory(HistoryProps history, QString filePath);
     void testText();
 	bool isUtf8Text(QByteArray& data);
@@ -89,7 +85,7 @@ private:
     QTextBrowser* ui_TextBrowsers[M_TEXT_BROWSER_CNT];
     QLabel* ui_QSliderInfo;
     QSlider* ui_QSlider;
-    TextViewContainer::FileInfo m_fileInfo;
+    TextViewContainer::TextFileInfo m_fileInfo;
 };
 
 #endif // TEXTVIEWCONTAINER_H

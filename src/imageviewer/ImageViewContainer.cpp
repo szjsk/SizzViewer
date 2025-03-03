@@ -37,7 +37,7 @@ ImageViewContainer::ImageViewContainer(QWidget* parent)
     // 슬라이더 값 변경 시 정보를 업데이트하는 람다 슬롯 연결
     connect(ui_qSlider, &QSlider::valueChanged, this, [this](int value) {
         m_imageInfo.currentIndex = value;
-        navigateToFile(MoveMode::None);
+        navigateToFile(FileUtils::None);
         ui_qSliderInfo->setText(QString("count: %1 / %2").arg(m_imageInfo.currentIndex +1).arg(ui_qSlider->maximum()+1));
         });
 }
@@ -79,7 +79,7 @@ void ImageViewContainer::loadFileList(QString filePath) {
     ui_qSlider->setMaximum(fileList.size()-1);
     ui_qSliderInfo->setText(QString("count: %1 / %2").arg(currentIndex + 1).arg(ui_qSlider->maximum() + 1));
 
-    navigateToFile(MoveMode::None);
+    navigateToFile(FileUtils::None);
 
     this->window()->activateWindow();
     this->window()->raise();
@@ -121,13 +121,13 @@ bool ImageViewContainer::changeSplitView() {
     StatusStore::instance().getImageSettings().setSplitView(newSplit);
     
 	ui_imageView[1]->setVisible(newSplit);
-	navigateToFile(MoveMode::None);
+	navigateToFile(FileUtils::None);
     //resizeImage(m_imageScale.scaleMode, m_imageScale.percentage);
 	return newSplit;
 
 }
 
-void ImageViewContainer::navigateToFolder(MoveMode moveMode) {
+void ImageViewContainer::navigateToFolder(FileUtils::MoveMode moveMode) {
     
     const ImageListInfo& imageInfo = m_imageInfo;
 
@@ -139,10 +139,10 @@ void ImageViewContainer::navigateToFolder(MoveMode moveMode) {
 	QString filePath = imageInfo.fileList.at(imageInfo.currentIndex);
     QString file;
 
-    if (moveMode == MoveMode::NextFolder) {
+    if (moveMode == FileUtils::NextFolder) {
         file = FileUtils::moveFolder(filePath, FileUtils::MoveMode::NextFolder, FileUtils::IMAGE);
     }
-    else if (moveMode == MoveMode::PrevFolder) {
+    else if (moveMode == FileUtils::PrevFolder) {
         file = FileUtils::moveFolder(filePath, FileUtils::MoveMode::PrevFolder, FileUtils::IMAGE);
     }
 
@@ -155,7 +155,7 @@ void ImageViewContainer::navigateToFolder(MoveMode moveMode) {
 
 }
 
-void ImageViewContainer::navigateToFile(MoveMode moveMode) {
+void ImageViewContainer::navigateToFile(FileUtils::MoveMode moveMode) {
 
     ImageListInfo* imageInfo = &m_imageInfo;
     const ImageScale& imageScale = m_imageScale;
@@ -167,27 +167,27 @@ void ImageViewContainer::navigateToFile(MoveMode moveMode) {
 
     int currentIndex = imageInfo->currentIndex;
     // 이동 모드에 따른 인덱스 변경
-    if (moveMode == MoveMode::Next) {
+    if (moveMode == FileUtils::Next) {
         currentIndex += step;
     }
-    else if (moveMode == MoveMode::Prev) {
+    else if (moveMode == FileUtils::Prev) {
         currentIndex -= step;
 	}
-	else if (moveMode == MoveMode::First) {
+	else if (moveMode == FileUtils::First) {
         currentIndex = 0;
 	}
-	else if (moveMode == MoveMode::Last) {
+	else if (moveMode == FileUtils::Last) {
         currentIndex = imageInfo->fileList.size() - 1;
 	}
     // moveMode가 None인 경우 m_currentIndex는 그대로 사용
 
     // 자동 다음 페이지 이동.
     if (currentIndex < 0 && StatusStore::instance().getImageSettings().isAutoNext()) {
-		navigateToFolder(MoveMode::PrevFolder);
+		navigateToFolder(FileUtils::PrevFolder);
         return;
 	}
 	else if (currentIndex >= imageInfo->fileList.size() && StatusStore::instance().getImageSettings().isAutoNext()) {
-		navigateToFolder(MoveMode::NextFolder);
+		navigateToFolder(FileUtils::NextFolder);
 		return;
 	}else if (currentIndex < 0 || currentIndex >= imageInfo->fileList.size()) {
         return;
@@ -279,16 +279,16 @@ bool ImageViewContainer::eventFilter(QObject* watched, QEvent* event) {
 			toggleFullScreen();
         }
         else if (keyEvent->key() == Qt::Key_PageDown) {
-			navigateToFolder(MoveMode::NextFolder);
+			navigateToFolder(FileUtils::NextFolder);
         }
         else if (keyEvent->key() == Qt::Key_PageUp) {
-            navigateToFolder(MoveMode::PrevFolder);
+            navigateToFolder(FileUtils::PrevFolder);
         }
 		else if (keyEvent->key() == Qt::Key_Left) {
-			navigateToFile(MoveMode::Prev);
+			navigateToFile(FileUtils::Prev);
 		}
 		else if (keyEvent->key() == Qt::Key_Right) {
-			navigateToFile(MoveMode::Next);
+			navigateToFile(FileUtils::Next);
         }
         else if (keyEvent->key() == Qt::Key_1) {
             resizeImage(ImageView::ScaleMode::FitToWindow);
@@ -335,13 +335,13 @@ bool ImageViewContainer::eventFilter(QObject* watched, QEvent* event) {
         }
         else if (keyEvent->key() == Qt::Key_BracketLeft) {
             m_imageInfo.fileList.insert(m_imageInfo.currentIndex, "");
-            navigateToFile(MoveMode::None);
+            navigateToFile(FileUtils::None);
             ui_qSlider->setMaximum(m_imageInfo.fileList.size() - 1);
             
         }
         else if (keyEvent->key() == Qt::Key_BracketRight) {
             m_imageInfo.fileList.insert(m_imageInfo.currentIndex+1, "");
-            navigateToFile(MoveMode::None);
+            navigateToFile(FileUtils::None);
             ui_qSlider->setMaximum(m_imageInfo.fileList.size() - 1);
         }
         return false;  // 이벤트를 가로채서 처리 완료
@@ -355,10 +355,10 @@ bool ImageViewContainer::eventFilter(QObject* watched, QEvent* event) {
         int centerX = this->width() / 2;
 
         if (mousePos.x() < centerX) {
-            navigateToFile(MoveMode::Prev);
+            navigateToFile(FileUtils::Prev);
         }
         else {
-            navigateToFile(MoveMode::Next);
+            navigateToFile(FileUtils::Next);
         }
     }
 

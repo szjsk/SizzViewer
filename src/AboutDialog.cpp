@@ -9,9 +9,9 @@ AboutDialog::AboutDialog(QWidget* parent)
     //f:\qt\6.8.2\msvc2022_64\bin\windeployqt6.exe
     // 
     // - 압축파일 지원 1
-    // - 파일 그룹화 기능 추가 (파일 삭제, 일괄 이름 변경을 위한 그룹)
     // 
     // 이미지 단축키 설정 추가 --- 나아중에 
+    // - 파일 그룹화 기능 추가 (파일 삭제, 일괄 이름 변경을 위한 그룹)
 
     const QString titleText = R"(
        <h2>SzViewer</h2>
