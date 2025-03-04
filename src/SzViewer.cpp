@@ -66,8 +66,8 @@ SzViewer::~SzViewer()
 void SzViewer::handleDeleteKey(QStringList files, FileUtils::SupportType type) {
 	QStringList fileList = FileUtils::getFileList(files.at(0), type);
 
-	QString prevFolder = FileUtils::moveFolder(files.at(0), FileUtils::MoveMode::Prev, type);
-	QString nextFolder = FileUtils::moveFolder(files.at(0), FileUtils::MoveMode::Next, type);
+	QString prevFolder = FileUtils::moveFolder(files.at(0), FileUtils::MoveMode::PrevFolder, type);
+	QString nextFolder = FileUtils::moveFolder(files.at(0), FileUtils::MoveMode::NextFolder, type);
 
 
 	DeleteFilesDialog dialog(files, m_deleteFolder, this);
@@ -75,6 +75,7 @@ void SzViewer::handleDeleteKey(QStringList files, FileUtils::SupportType type) {
 		this->window()->setWindowTitle(QString("SzViewer"));
 		QStringList deletedData = dialog.getDeletedFiles();
 		if (dialog.isDeleteFolderChecked() && !deletedData.isEmpty()) {
+			m_deleteFolder = dialog.isDeleteFolderChecked();
 			openFile(nextFolder.isEmpty() ? prevFolder : nextFolder);
 		}
 		else if(!deletedData.isEmpty()){
