@@ -110,15 +110,15 @@ bool TextViewContainer::isUtf8Text(QByteArray& data) {
 }
 
 void TextViewContainer::initTextFile(QString filePath, FileUtils::MoveMode moveMode) {
-	QList<FileUtils::SzViewerFile> files = FileUtils::extractFileListBy(filePath, moveMode, FileUtils::TEXT, false);
+	QList<FileUtils::viewerFile> files = FileUtils::extractFileListBy(filePath, moveMode, FileUtils::TEXT, false);
 
 	if (files.size() != 1) {
 		return;
 	}
 
-	FileUtils::SzViewerFile file = files.at(0);
+	FileUtils::viewerFile file = files.at(0);
 
-	this->window()->setWindowTitle(QString("SzViewer - %1").arg(file.fileName));
+	this->window()->setWindowTitle(QString("SizzViewer - %1").arg(file.fileName));
 	m_fileInfo = TextViewContainer::TextFileInfo();
 
 	if (file.isArchive && !file.archiveName.isEmpty()) {

@@ -68,7 +68,7 @@ private: //variable
 	QLabel* ui_qSliderInfo;
 	QHBoxLayout* ui_hBoxBrowser;
 	ImageView* ui_imageView[M_IMAGE_BROWSER_CNT];
-	FileUtils::SzViewerFile m_imageInfo[M_IMAGE_BROWSER_CNT];
+	FileUtils::viewerFile m_imageInfo[M_IMAGE_BROWSER_CNT];
 	ImageScale m_imageScale;
 };
 

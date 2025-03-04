@@ -42,7 +42,6 @@ public:
 	TextSettingProps getTextSettings();
 
 signals:
-	// 실시간 프리뷰용 시그널 (szViewer 등에서 연결하여 적용)
 	void settingsChanged(const TextSettingProps& settings);
 
 private slots:

@@ -1,5 +1,5 @@
 # Sizz Viewer
-- 이름 변경예정입니다. SzViewer -> Sizz Viewer
+- 이름 변경 SzViewer -> Sizz Viewer
 
 ## 텍스트뷰어 프로그램 
 
@@ -26,13 +26,13 @@
 - M : 이미지 첫 페이지 빈 페이지 추가
 - *.jpg, *.jpeg, *.png, *.bmp, *.gif, *.webp , *.ico 등 지원합니다.  
 
-![SzViewer Image](resources/readme/szviewer-image-1page.png)
+![SizzViewer Image](resources/readme/SizzViewer-image-1page.png)
 
-![SzViewer Image](resources/readme/szviewer-image-2page.png)
+![SizzViewer Image](resources/readme/SizzViewer-image-2page.png)
 
 **- 이미지 뷰어 툴바 설명**
 
-![SzViewer Image](resources/readme/szviewer-image-toolbar.png)
+![SizzViewer Image](resources/readme/SizzViewer-image-toolbar.png)
 
 좌측 부터 순서대로
 
@@ -57,7 +57,7 @@
 - 파일/폴더 삭제
 - 이미지 셋팅
 
-![SzViewer Image](resources/readme/szviewer-image-setting.png)
+![SizzViewer Image](resources/readme/SizzViewer-image-setting.png)
 
 	align : 이미지 정렬 (좌, 가운데, 우, spred(2페이지 보기일때만 몰아보기)
 
@@ -75,11 +75,11 @@
 - del : 파일 삭제
 - 현재 *.txt (UTF-8)만 지원합니다.
 
-![SzViewer Image](resources/readme/szviewer-text.png)
+![SizzViewer Image](resources/readme/SizzViewer-text.png)
 
 **- 이미지 뷰어 툴바 설명**
 
-![SzViewer Image](resources/readme/szviewer-text-toolbar.png)
+![SizzViewer Image](resources/readme/SizzViewer-text-toolbar.png)
 
 좌측 부터 순서대로
 

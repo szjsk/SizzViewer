@@ -56,8 +56,8 @@ ImageViewContainer::~ImageViewContainer() {
 void ImageViewContainer::clear() {
 	ui_imageView[0]->clear();
 	ui_imageView[1]->clear();
-	m_imageInfo[0] = FileUtils::SzViewerFile();
-	m_imageInfo[1] = FileUtils::SzViewerFile();
+	m_imageInfo[0] = FileUtils::viewerFile();
+	m_imageInfo[1] = FileUtils::viewerFile();
 	ui_qSlider->setValue(0);
 	ui_qSlider->setMaximum(0);
 	ui_qSliderInfo->setText(QString("count: %1 / %2").arg(0).arg(0));
@@ -77,7 +77,7 @@ QHBoxLayout* ImageViewContainer::createSlider() {
 
 void ImageViewContainer::initImageFile(QString filePath, FileUtils::MoveMode moveMode) {
 	bool isSplit = StatusStore::instance().getImageSettings().isSplitView();
-	QList<FileUtils::SzViewerFile> files = FileUtils::extractFileListBy(filePath, moveMode, FileUtils::IMAGE, isSplit);
+	QList<FileUtils::viewerFile> files = FileUtils::extractFileListBy(filePath, moveMode, FileUtils::IMAGE, isSplit);
 
 	// 자동 다음 페이지 이동.
 	if (moveMode == FileUtils::Next && files.isEmpty() && StatusStore::instance().getImageSettings().isAutoNext()) {
@@ -105,7 +105,7 @@ void ImageViewContainer::initImageFile(QString filePath, FileUtils::MoveMode mov
 			StatusStore::instance().getImageHistory().addFileInfo(historyFile, -1, "");
 		}
 		else {
-			m_imageInfo[i] = FileUtils::SzViewerFile();
+			m_imageInfo[i] = FileUtils::viewerFile();
 			ui_imageView[i]->clear();
 		}
 	}
@@ -113,7 +113,7 @@ void ImageViewContainer::initImageFile(QString filePath, FileUtils::MoveMode mov
 	ui_qSlider->setValue(files.at(0).currentIndex);
 	ui_qSliderInfo->setText(QString("count: %1 / %2").arg(files.at(0).currentIndex+1).arg(ui_qSlider->maximum()));
 
-	this->window()->setWindowTitle(QString("SzViewer - %1       /        %2").arg(m_imageInfo[0].fileName).arg(m_imageInfo[1].fileName));
+	this->window()->setWindowTitle(QString("SizzViewer - %1       /        %2").arg(m_imageInfo[0].fileName).arg(m_imageInfo[1].fileName));
 
 	this->window()->activateWindow();
 	this->window()->raise();

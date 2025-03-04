@@ -21,13 +21,13 @@
 #include <QWidgetAction>
 #include <QMessageBox>
 
-class SzViewer : public QMainWindow
+class SizzViewer : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    SzViewer(QWidget *parent = nullptr);
-    ~SzViewer();
+    SizzViewer(QWidget *parent = nullptr);
+    ~SizzViewer();
 
 
 protected:

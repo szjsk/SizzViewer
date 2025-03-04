@@ -160,10 +160,10 @@ bool FileUtils::isAddEmptyPage() {
     return g_isImageFirstEmpty;
 }
 
-QList<FileUtils::SzViewerFile> FileUtils::extractFileListBy(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
+QList<FileUtils::viewerFile> FileUtils::extractFileListBy(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
 
 	if (filePath.isEmpty()) {
-		return QList<FileUtils::SzViewerFile>();
+		return QList<FileUtils::viewerFile>();
 	}
 
     if (isArchivePath(filePath)) {
@@ -175,7 +175,7 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileListBy(QString filePath, Fi
 	}
 }
 
-QList<FileUtils::SzViewerFile> FileUtils::extractFileInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
+QList<FileUtils::viewerFile> FileUtils::extractFileInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
 
 
     QStringList list = getFileList(filePath, type);
@@ -210,7 +210,7 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileInfos(QString filePath, Fil
     }
 
     int size = isPairPage ? 2 : 1;
-    QList<FileUtils::SzViewerFile> result;
+    QList<FileUtils::viewerFile> result;
     for (int i = 0; i < size; i++) {
 
         int currentIdx = currentIndex + i;
@@ -219,7 +219,7 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileInfos(QString filePath, Fil
         }
         QString currentFilePath = list.at(currentIdx);
         QFile qFile(currentFilePath);
-        SzViewerFile file;
+        viewerFile file;
 
         if (qFile.open(QIODevice::ReadOnly)) {
 
@@ -237,7 +237,7 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileInfos(QString filePath, Fil
     return result;
 }
 
-QList<FileUtils::SzViewerFile> FileUtils::extractArchiveInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
+QList<FileUtils::viewerFile> FileUtils::extractArchiveInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
 
     ZipArchiveManager& zipManager = ZipArchiveManager::instance();
     QStringList list = zipManager.getFileList();
@@ -270,7 +270,7 @@ QList<FileUtils::SzViewerFile> FileUtils::extractArchiveInfos(QString filePath, 
     }
 
     int size = isPairPage ? 2 : 1;
-    QList<FileUtils::SzViewerFile> result;
+    QList<FileUtils::viewerFile> result;
     for (int i = 0; i < size; i++) {
         int currentIdx = currentIndex + i;
 
@@ -282,7 +282,7 @@ QList<FileUtils::SzViewerFile> FileUtils::extractArchiveInfos(QString filePath, 
 		if (fileName.isEmpty()) {
 			continue;
 		}
-        SzViewerFile file;
+        viewerFile file;
         file.isArchive = true;
         file.fileName = fileName;
         file.archiveName = zipManager.getZipPath();

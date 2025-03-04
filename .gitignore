@@ -3,11 +3,13 @@ Debug/
 x64/
 .vs/
 SzViewer/
+SizzViewer/
 *.user
 *.suo
 *.aps
 *.vcxproj.user
 *.qmake.stash
 /SzViewer.vcxproj.filters
+/SizzViewer.vcxproj.filters
 /TextSettingProps.json
 /*.json

@@ -1,11 +1,11 @@
-﻿#include "SzViewer.h"
+﻿#include "SizzViewer.h"
 
-SzViewer::SzViewer(QWidget* parent)
+SizzViewer::SizzViewer(QWidget* parent)
 	: QMainWindow(parent)
 {
 
 	//창 설정.
-	QSettings settings("SzViewer", "SzViewer-Common");
+	QSettings settings("SizzViewer", "SizzViewer-Common");
 	QRect geom = settings.value("geometry", QRect(100, 100, 1024, 768)).toRect();
 	setGeometry(geom);
 
@@ -13,14 +13,14 @@ SzViewer::SzViewer(QWidget* parent)
 
 	ui_textViewContainer = new TextViewContainer(this);
 	ui_stackedWidget->addWidget(ui_textViewContainer);
-	connect(ui_textViewContainer, &TextViewContainer::deleteKeyPressed, this, &SzViewer::handleDeleteKey);
+	connect(ui_textViewContainer, &TextViewContainer::deleteKeyPressed, this, &SizzViewer::handleDeleteKey);
 	connect(ui_textViewContainer, &TextViewContainer::renameFile, this, [this](QString fileName) {
 		openFile(FileUtils::renameFile(fileName, this));
 		});
 
 	ui_imageViewContainer = new ImageViewContainer(this);
 	ui_stackedWidget->addWidget(ui_imageViewContainer);
-	connect(ui_imageViewContainer, &ImageViewContainer::deleteKeyPressed, this, &SzViewer::handleDeleteKey);
+	connect(ui_imageViewContainer, &ImageViewContainer::deleteKeyPressed, this, &SizzViewer::handleDeleteKey);
 	connect(ui_imageViewContainer, &ImageViewContainer::renameFile, this, [this](QString fileName) {
 		openFile(FileUtils::renameFile(fileName, this));
 		});
@@ -57,13 +57,13 @@ SzViewer::SzViewer(QWidget* parent)
 
 }
 
-SzViewer::~SzViewer()
+SizzViewer::~SizzViewer()
 {
-	QSettings settings("SzViewer", "SzViewer-Common");
+	QSettings settings("SizzViewer", "SizzViewer-Common");
 	settings.setValue("geometry", this->geometry());
 }
 
-void SzViewer::handleDeleteKey(QStringList files, FileUtils::SupportType type) {
+void SizzViewer::handleDeleteKey(QStringList files, FileUtils::SupportType type) {
 	QStringList fileList = FileUtils::getFileList(files.at(0), type);
 
 	QString prevFolder = FileUtils::moveFolder(files.at(0), FileUtils::MoveMode::PrevFolder, type);
@@ -72,7 +72,7 @@ void SzViewer::handleDeleteKey(QStringList files, FileUtils::SupportType type) {
 
 	DeleteFilesDialog dialog(files, m_deleteFolder, this);
 	if (dialog.exec() == QDialog::Accepted) {
-		this->window()->setWindowTitle(QString("SzViewer"));
+		this->window()->setWindowTitle(QString("SizzViewer"));
 		QStringList deletedData = dialog.getDeletedFiles();
 		if (dialog.isDeleteFolderChecked() && !deletedData.isEmpty()) {
 			m_deleteFolder = dialog.isDeleteFolderChecked();
@@ -108,7 +108,7 @@ void SzViewer::handleDeleteKey(QStringList files, FileUtils::SupportType type) {
 	}
 }
 
-QToolBar* SzViewer::CommonLeft() {
+QToolBar* SizzViewer::CommonLeft() {
 
 	QToolBar* toolBar = new QToolBar(this);
 	toolBar->setMovable(true);
@@ -123,7 +123,7 @@ QToolBar* SzViewer::CommonLeft() {
 
 	// 첫번째 줄: Open 액션
 	QAction* openAction = fileMenu->addAction("Open");
-	connect(openAction, &QAction::triggered, this, &SzViewer::openFileDialog);
+	connect(openAction, &QAction::triggered, this, &SizzViewer::openFileDialog);
 
 	QAction* historyClearAction = fileMenu->addAction("Clear");
 	connect(historyClearAction, &QAction::triggered, this, [this, fileMenu]() {
@@ -148,7 +148,7 @@ QToolBar* SzViewer::CommonLeft() {
 	return toolBar;
 }
 
-void SzViewer::addQActionInFileMenu(QMenu* fileMenu) {
+void SizzViewer::addQActionInFileMenu(QMenu* fileMenu) {
 	QList<QAction*> actions = fileMenu->actions();
 	// 1,2 액션은 삭제하지 않음
 	for (int i = actions.size() - 1; i > 1; i--) {
@@ -162,7 +162,7 @@ void SzViewer::addQActionInFileMenu(QMenu* fileMenu) {
 	addHistoryCheckBox(fileMenu, imgProps, HistoryProps::SavedType::IMAGE_HISTORY);
 }
 
-void SzViewer::addHistoryCheckBox(QMenu* fileMenu, HistoryProps props, HistoryProps::SavedType type) {
+void SizzViewer::addHistoryCheckBox(QMenu* fileMenu, HistoryProps props, HistoryProps::SavedType type) {
 
 	fileMenu->addSeparator();
 
@@ -199,7 +199,7 @@ void SzViewer::addHistoryCheckBox(QMenu* fileMenu, HistoryProps props, HistoryPr
 
 }
 
-QToolBar* SzViewer::CommonRight() {
+QToolBar* SizzViewer::CommonRight() {
 	QToolBar* toolBar = new QToolBar(this);
 	toolBar->setMovable(true);
 	QAction* imageAction = new QAction(QIcon(":/icon/resources/icon/autorenew_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), "changeView", this);
@@ -216,7 +216,7 @@ QToolBar* SzViewer::CommonRight() {
 	return toolBar;
 }
 
-void SzViewer::changeVisible(bool isCurrentTextView) {
+void SizzViewer::changeVisible(bool isCurrentTextView) {
 	if (isCurrentTextView) {
 		ui_stackedWidget->setCurrentWidget(ui_imageViewContainer);
 		ui_imageToolBar->setVisible(true);
@@ -233,7 +233,7 @@ void SzViewer::changeVisible(bool isCurrentTextView) {
 	}
 }
 
-void SzViewer::openFileDialog()
+void SizzViewer::openFileDialog()
 {
 	if (ui_textViewContainer->isVisible()) {
 		QString fileName = QFileDialog::getOpenFileName(this, "Open File",
@@ -249,7 +249,7 @@ void SzViewer::openFileDialog()
 
 }
 
-void SzViewer::resizeEvent(QResizeEvent* event) {
+void SizzViewer::resizeEvent(QResizeEvent* event) {
 	if (ui_imageViewContainer->isVisible()) {
 		//todo
 	}
@@ -259,7 +259,7 @@ void SzViewer::resizeEvent(QResizeEvent* event) {
 }
 
 // 드래그 엔터 이벤트 처리 : 파일이면 받아들임.
-void SzViewer::dragEnterEvent(QDragEnterEvent* event)
+void SizzViewer::dragEnterEvent(QDragEnterEvent* event)
 {
 	if (event->mimeData()->hasUrls()) {
 		event->acceptProposedAction();
@@ -267,7 +267,7 @@ void SzViewer::dragEnterEvent(QDragEnterEvent* event)
 }
 
 // 드랍 이벤트 처리 : 첫 번째 파일 경로를 사용하여 파일 오픈.
-void SzViewer::dropEvent(QDropEvent* event)
+void SizzViewer::dropEvent(QDropEvent* event)
 {
 	QList<QUrl> urls = event->mimeData()->urls();
 
@@ -278,7 +278,7 @@ void SzViewer::dropEvent(QDropEvent* event)
 	openFile(urls.first().toLocalFile());
 }
 
-void SzViewer::openFile(QString fileName) {
+void SizzViewer::openFile(QString fileName) {
 	if (fileName.isEmpty()) {
 		return;
 	}

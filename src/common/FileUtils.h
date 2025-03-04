@@ -19,7 +19,7 @@ class FileUtils
 {
 public:
 
-	struct SzViewerFile {
+	struct viewerFile {
 		bool isArchive;
 		QString fileName;
 		QString archiveName;
@@ -55,7 +55,7 @@ public:
 	static void moveToTrash(QString filePath);
 	static void moveFolderToTrash(QString folderPath);
 	static bool isArchivePath(QString filePath);
-	static QList<FileUtils::SzViewerFile> extractFileListBy(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage = false);
+	static QList<FileUtils::viewerFile> extractFileListBy(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage = false);
 	static QString renameFile(QString currentFile, QWidget* parent);
 	static QString renameFolder(QString currentFile, QWidget* parent);
 	static void setAddEmptyPage(bool isImageFirstEmpty);
@@ -63,8 +63,8 @@ public:
 
 
 private:
-	static QList<FileUtils::SzViewerFile> extractFileInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage);
-	static QList<FileUtils::SzViewerFile> extractArchiveInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage);
+	static QList<FileUtils::viewerFile> extractFileInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage);
+	static QList<FileUtils::viewerFile> extractArchiveInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage);
 
 	static bool g_isImageFirstEmpty;
 };
