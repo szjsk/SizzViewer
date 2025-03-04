@@ -1,6 +1,6 @@
 # SzViewer
 
-## 텍스트뷰어 프로그램 0.2.0
+## 텍스트뷰어 프로그램 0.3.0
 
 ### 이미지 뷰어
 
@@ -46,6 +46,8 @@
 - 좌우반전
 - -45도 회전
 - +45도 회전
+- <추가> 좌우 방향 변경(일본만화방식)
+- <추가> 두페이지 모아보기(spread)
 - 전체화면
 - 두페이지 보기/한페이지 보기
 - 파일/폴더 삭제
@@ -89,8 +91,10 @@
 - 텍스트 뷰어 전환
 - about
 
-Icon 출처 : https://fonts.google.com/icons
+- 
+## Third Party Libraries
+[Icon  : https://fonts.google.com/icons ] 
+- Material Design Icons by Google Licensed under the Apache License 2.0
 
-Material Design Icons by Google
-
-Licensed under the Apache License 2.0
+[압축파일]
+- miniz (Public Domain) - Compression library

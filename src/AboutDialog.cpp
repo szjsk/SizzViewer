@@ -41,8 +41,6 @@ AboutDialog::AboutDialog(QWidget* parent)
         F3 : 분할 보기 파일 이름 변경<br>
         CTRL + F2 : 폴더 이름 변경<br>
         N : 좌우 보기 변경(일본만화)<br>
-        [ : 빈 파일 추가(현재파일 위치)<br>
-        ] : 파일 추가(다음파일 위치) <br>
         *.jpg *.jpeg *.png *.bmp *.gif *.webp *.ico *.svg 등을 지원합니다.<br>
         webp는 지원예정입니다.<br>
         </p>
@@ -52,10 +50,12 @@ AboutDialog::AboutDialog(QWidget* parent)
     const QString aboutText = R"(
         <p><b>작성자</b> : szJs<br>
         <b>이메일</b> : <a href="mailto:sizz.js@gmail.com">sizz.js@gmail.com</a></p>
-        <b>버전</b> : 0.2.1 (2025.03.03)</p>
-        <p><b>Icons</b><br>
-        Material Design Icons by Google<br>
-        Licensed under the Apache License 2.0
+        <b>버전</b> : 0.3.0 (2025.03.03)</p>
+        <p><b>Third Party Libraries</b><br>
+        <b>Icons</b><br>
+        Material Design Icons by Google - Licensed under the Apache License 2.0<br/>
+        <b>miniz</b><br>
+        miniz (Public Domain - Unlicense) - Compression library<br/>
         </p>
     )";
 
