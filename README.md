@@ -26,13 +26,13 @@
 - M : 이미지 첫 페이지 빈 페이지 추가
 - *.jpg, *.jpeg, *.png, *.bmp, *.gif, *.webp , *.ico 등 지원합니다.  
 
-![SizzViewer Image](resources/readme/sizzViewer-image-1page.png)
+![SizzViewer Image](resources/readme/sizzviewer-image-1page.png)
 
-![SizzViewer Image](resources/readme/sizzViewer-image-2page.png)
+![SizzViewer Image](resources/readme/sizzviewer-image-2page.png)
 
 **- 이미지 뷰어 툴바 설명**
 
-![SizzViewer Image](resources/readme/sizzViewer-image-toolbar.png)
+![SizzViewer Image](resources/readme/sizzviewer-image-toolbar.png)
 
 좌측 부터 순서대로
 
@@ -57,7 +57,7 @@
 - 파일/폴더 삭제
 - 이미지 셋팅
 
-![SizzViewer Image](resources/readme/sizzViewer-image-setting.png)
+![SizzViewer Image](resources/readme/sizzviewer-image-setting.png)
 
 	align : 이미지 정렬 (좌, 가운데, 우, spred(2페이지 보기일때만 몰아보기)
 
@@ -75,11 +75,11 @@
 - del : 파일 삭제
 - 현재 *.txt (UTF-8)만 지원합니다.
 
-![SizzViewer Image](resources/readme/sizzViewer-text.png)
+![SizzViewer Image](resources/readme/sizzviewer-text.png)
 
 **- 이미지 뷰어 툴바 설명**
 
-![SizzViewer Image](resources/readme/sizzViewer-text-toolbar.png)
+![SizzViewer Image](resources/readme/sizzviewer-text-toolbar.png)
 
 좌측 부터 순서대로
 
