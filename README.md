@@ -1,4 +1,5 @@
-# SzViewer
+# Sizz Viewer
+- 이름 변경예정입니다. SzViewer -> Sizz Viewer
 
 ## 텍스트뷰어 프로그램 
 

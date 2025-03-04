@@ -4,7 +4,7 @@
 AboutDialog::AboutDialog(QWidget* parent)
 	:QDialog(parent)
 {
-	setWindowTitle("SzViewer 0.3.1 (2025-03-05)");
+	setWindowTitle("Sizz Viewer");
 	setFixedSize(400, 600);
     //f:\qt\6.8.2\msvc2022_64\bin\windeployqt6.exe
     // 
@@ -13,7 +13,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     // - 파일 그룹화 기능 추가 (파일 삭제, 일괄 이름 변경을 위한 그룹)
 
     const QString titleText = R"(
-       <h2>SzViewer 0.3.1 (2025-03-05) </h2>
+       <h2>Sizz Viewer 0.3.1 (2025-03-05) </h2>
     )";
 
     const QString helpText = R"(
