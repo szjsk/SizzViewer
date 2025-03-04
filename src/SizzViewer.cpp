@@ -4,6 +4,8 @@ SizzViewer::SizzViewer(QWidget* parent)
 	: QMainWindow(parent)
 {
 
+	setWindowIcon(QIcon(":/resources/program-icon.svg"));
+
 	//창 설정.
 	QSettings settings("SizzViewer", "SizzViewer-Common");
 	QRect geom = settings.value("geometry", QRect(100, 100, 1024, 768)).toRect();
