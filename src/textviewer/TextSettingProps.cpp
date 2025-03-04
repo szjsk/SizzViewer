@@ -5,10 +5,10 @@ TextSettingProps::TextSettingProps()
 	: m_splitView(false),
 	m_textView(true),
 	m_font(QFont("맑은 고딕", 16, QFont::Bold)),
-	m_textColor(Qt::black),
+	m_textColor(QColor("#282828")),
 	m_backgroundColor(QColor("#e8e4d2")), //#e8e4d2
 	m_padding(10, 10, 10, 10),
-	m_lineSpacing(1.0),
+	m_lineSpacing(1.5),
 	m_autoNext(true)
 {
 }
