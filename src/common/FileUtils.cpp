@@ -151,6 +151,15 @@ QString FileUtils::moveFolder(QString fileName, MoveMode moveMode, SupportType t
     return QString();
 }
 
+bool FileUtils::g_isImageFirstEmpty = false; // 변수 정의 및 초기화
+
+void FileUtils::setAddEmptyPage(bool isImageFirstEmpty) {
+    g_isImageFirstEmpty = isImageFirstEmpty;
+}
+bool FileUtils::isAddEmptyPage() {
+    return g_isImageFirstEmpty;
+}
+
 QList<FileUtils::SzViewerFile> FileUtils::extractFileListBy(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
 
 	if (filePath.isEmpty()) {
@@ -170,6 +179,9 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileInfos(QString filePath, Fil
 
 
     QStringList list = getFileList(filePath, type);
+    if (g_isImageFirstEmpty && isPairPage && list.size() > 0 && type == FileUtils::IMAGE) {
+		list.prepend("");
+    }
     int currentIndex = list.indexOf(filePath);
 
     if (isPairPage) {
@@ -229,7 +241,9 @@ QList<FileUtils::SzViewerFile> FileUtils::extractArchiveInfos(QString filePath, 
 
     ZipArchiveManager& zipManager = ZipArchiveManager::instance();
     QStringList list = zipManager.getFileList();
-
+    if (g_isImageFirstEmpty && isPairPage && list.size() > 0 && type == FileUtils::IMAGE) {
+        list.prepend("");
+    }
     int currentIndex = list.indexOf(filePath);
 
     if (isPairPage) {
@@ -265,6 +279,9 @@ QList<FileUtils::SzViewerFile> FileUtils::extractArchiveInfos(QString filePath, 
         }
 
         QString fileName = list.at(currentIndex + i);
+		if (fileName.isEmpty()) {
+			continue;
+		}
         SzViewerFile file;
         file.isArchive = true;
         file.fileName = fileName;

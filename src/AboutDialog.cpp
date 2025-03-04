@@ -4,7 +4,7 @@
 AboutDialog::AboutDialog(QWidget* parent)
 	:QDialog(parent)
 {
-	setWindowTitle("About");
+	setWindowTitle("SzViewer 0.3.1 (2025-03-05)");
 	setFixedSize(400, 600);
     //f:\qt\6.8.2\msvc2022_64\bin\windeployqt6.exe
     // 
@@ -13,7 +13,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     // - 파일 그룹화 기능 추가 (파일 삭제, 일괄 이름 변경을 위한 그룹)
 
     const QString titleText = R"(
-       <h2>SzViewer</h2>
+       <h2>SzViewer 0.3.1 (2025-03-05) </h2>
     )";
 
     const QString helpText = R"(
@@ -41,6 +41,7 @@ AboutDialog::AboutDialog(QWidget* parent)
         F3 : 분할 보기 파일 이름 변경<br>
         CTRL + F2 : 폴더 이름 변경<br>
         N : 좌우 보기 변경(일본만화)<br>
+        M : 이미지 첫 페이지 빈 페이지 추가<br>
         *.jpg *.jpeg *.png *.bmp *.gif *.webp *.ico *.svg 등을 지원합니다.<br>
         webp는 지원예정입니다.<br>
         </p>
@@ -50,7 +51,6 @@ AboutDialog::AboutDialog(QWidget* parent)
     const QString aboutText = R"(
         <p><b>작성자</b> : szJs<br>
         <b>이메일</b> : <a href="mailto:sizz.js@gmail.com">sizz.js@gmail.com</a></p>
-        <b>버전</b> : 0.3.0 (2025.03.03)</p>
         <p><b>Third Party Libraries</b><br>
         <b>Icons</b><br>
         Material Design Icons by Google - Licensed under the Apache License 2.0<br/>

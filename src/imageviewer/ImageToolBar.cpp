@@ -102,10 +102,15 @@ ImageToolBar::ImageToolBar(QWidget* parent, ImageViewContainer* container)
         });
     this->addAction(swapAction);
 
-    ImageView::Align state = StatusStore::instance().getImageSettings().getAlign();
-    QString iconName = state == ImageView::Align::CENTER_SPREAD ? ":/icon/resources/icon/compare_arrows_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" :
-        ":/icon/resources/icon/swap_horiz_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg";
-    QAction* spreadAction = new QAction(QIcon(iconName), "spread", this);
+    QAction* insertEmptyAction = new QAction(QIcon(":/icon/resources/icon/input_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), "insert", this);
+    insertEmptyAction->setToolTip("insert Empty Page (m)");
+    connect(insertEmptyAction, &QAction::triggered, this, [this, container]() {
+        FileUtils::setAddEmptyPage(!FileUtils::isAddEmptyPage());
+        container->navigate(FileUtils::None);
+        });
+    this->addAction(insertEmptyAction);
+
+    QAction* spreadAction = new QAction(QIcon(":/icon/resources/icon/swap_horiz_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), "spread", this);
     spreadAction->setToolTip("spread");
     connect(spreadAction, &QAction::triggered, this, [this, container, spreadAction]() {
 
@@ -114,12 +119,10 @@ ImageToolBar::ImageToolBar(QWidget* parent, ImageViewContainer* container)
         if (state == ImageView::Align::CENTER_SPREAD) {
             StatusStore::instance().getImageSettings().setAlign(ImageView::Align::CENTER);
             container->applySettings();
-            spreadAction->setIcon(QIcon(":/icon/resources/icon/compare_arrows_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"));
         }
         else {
             StatusStore::instance().getImageSettings().setAlign(ImageView::Align::CENTER_SPREAD);
             container->applySettings();
-            spreadAction->setIcon(QIcon(":/icon/resources/icon/swap_horiz_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"));
         }
         });
     this->addAction(spreadAction);

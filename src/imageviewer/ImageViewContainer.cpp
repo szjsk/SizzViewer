@@ -281,7 +281,11 @@ bool ImageViewContainer::eventFilter(QObject* watched, QEvent* event) {
 		else if (keyEvent->key() == Qt::Key_N) {
 			swapImageBox();
 		}
+		else if (keyEvent->key() == Qt::Key_M) {
+			FileUtils::setAddEmptyPage(!FileUtils::isAddEmptyPage());
+			navigate(FileUtils::None);
 
+		}
 		return false; 
 	}
 

@@ -29,5 +29,6 @@
         <file>resources/icon/compare_arrows_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
         <file>resources/icon/swap_horiz_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
         <file>resources/icon/switch_access_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/input_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
     </qresource>
 </RCC>
