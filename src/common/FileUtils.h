@@ -19,9 +19,11 @@ public:
 	struct SzViewerFile {
 		bool isArchive;
 		QString fileName;
+		QString archiveName;
 		QByteArray fileDataCache;
 		int size;
 		int currentIndex;
+		QStringList fileList;
 	};
 
 	enum MoveMode {

@@ -54,8 +54,8 @@ SzViewer::~SzViewer()
 	settings.setValue("geometry", this->geometry());
 }
 
-void SzViewer::handleDeleteKey(QStringList files, QString nextFile) {
-
+void SzViewer::handleDeleteKey(QStringList files) {
+	//todo nextFile 제외
 	QString nextFolderFile = ui_imageViewContainer->isVisible() ? FileUtils::moveFolder(files[0], FileUtils::NextFolder, FileUtils::IMAGE) : QString();
 
 	DeleteFilesDialog dialog(files, m_deleteFolder, this);
@@ -64,11 +64,11 @@ void SzViewer::handleDeleteKey(QStringList files, QString nextFile) {
 
 		m_deleteFolder = dialog.isDeleteFolderChecked();
 		if (m_deleteFolder && ui_imageViewContainer->isVisible()) {
-			ui_imageViewContainer->loadFileList(nextFolderFile);
+			//ui_imageViewContainer->loadFileList(nextFolderFile);
 		}
-		else if (!nextFile.isEmpty()) {
-			openFile(nextFile);
-		}
+		//else if (!nextFile.isEmpty()) {
+			//openFile(nextFile);
+		//}
 		else if (ui_imageViewContainer->isVisible()) {
 			ui_imageViewContainer->clear();
 		}
@@ -282,11 +282,11 @@ void SzViewer::openFile(QString fileName) {
 		// 예: 이미지 파일을 처리하는 로직 추가
 		// 예를 들면 이미지 뷰어 위젯에 이미지를 표시하는 방식 등이 있을 수 있음.
 		changeVisible(true);
-		ui_imageViewContainer->loadFileList(findFileName);
+		ui_imageViewContainer->initImageFile(findFileName, FileUtils::None);
 	}
 	else if (FileUtils::isSupportSuffix(findFileName, FileUtils::TEXT)) {
 		changeVisible(false);
-		ui_textViewContainer->initTextFile(findFileName , FileUtils::None);
+		ui_textViewContainer->initTextFile(findFileName, FileUtils::None);
 	}
 	else {
 		QMessageBox::warning(this, "warning", "can not support image/text file. " + fileName);

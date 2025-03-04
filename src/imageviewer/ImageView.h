@@ -8,6 +8,7 @@
 #include <QMovie>
 #include <QFileInfo>
 #include <QPainter>
+#include <QBuffer>
 
 class ImageView : public QScrollArea
 {
@@ -41,7 +42,7 @@ public:
 
 
     explicit ImageView(QWidget* parent = nullptr);
-	void loadImage(QString& filePath, ScaleMode scaleMode, int percentage, Align align);
+	void loadImage(QByteArray data, QString fileName, ScaleMode scaleMode, int percentage, Align align);
 	void resize(ScaleMode mode, int percentage);
 	void movieStop();
 	void clear();

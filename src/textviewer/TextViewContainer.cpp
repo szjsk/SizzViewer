@@ -114,7 +114,13 @@ void TextViewContainer::initTextFile(QString filePath, FileUtils::MoveMode moveM
 
 	this->window()->setWindowTitle(QString("SzViewer - %1").arg(file.fileName));
 	m_fileInfo = TextViewContainer::TextFileInfo();
+
+	if (file.isArchive) {
+		StatusStore::instance().getTextHistory().addFileInfo(file.archiveName, -1, "");
+	}
+
 	SavedFileInfo history = StatusStore::instance().getTextHistory().getFileInfo(file.fileName);
+
 
 	if (isUtf8Text(file.fileDataCache)) {
 		m_fileInfo.text = QString::fromUtf8(file.fileDataCache);
@@ -294,7 +300,7 @@ void TextViewContainer::deleteFile(const TextFileInfo* fileInfo) {
 	QStringList files;
 	files.append(fileInfo->fileName);
 
-	emit deleteKeyPressed(files, QString());
+	emit deleteKeyPressed(files);
 }
 
 void TextViewContainer::nextPage(const TextFileInfo* fileInfo) {

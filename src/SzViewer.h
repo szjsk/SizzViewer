@@ -40,7 +40,7 @@ protected:
 
 private slots:
     void openFileDialog();
-	void handleDeleteKey(QStringList files, QString nextFile);
+	void handleDeleteKey(QStringList files);
 
 private:
     bool isTextFile(const QString& fileName);

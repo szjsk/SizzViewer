@@ -128,10 +128,10 @@ ImageToolBar::ImageToolBar(QWidget* parent, ImageViewContainer* container)
 
 void ImageToolBar::move(ImageViewContainer* container, FileUtils::MoveMode mode) {
     if (mode == FileUtils::MoveMode::NextFolder || mode == FileUtils::MoveMode::PrevFolder) {
-        container->navigateToFolder(mode);
+        container->navigate(mode);
     }
     else {
-        container->navigateToFile(mode);
+        container->navigate(mode);
     }
 }
 

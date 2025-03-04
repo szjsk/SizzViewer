@@ -27,11 +27,6 @@ class ImageViewContainer : public QWidget
 
 public:
 
-	struct ImageListInfo {
-		QStringList fileList;
-		int currentIndex;
-	};
-
 	struct ImageScale {
 		int percentage;
 		int degree;
@@ -41,10 +36,11 @@ public:
 
     ImageViewContainer(QWidget* parent = nullptr);
 	~ImageViewContainer();
-	void loadFileList(QString filePath);
+	void initImageFile(QString filePath, FileUtils::MoveMode moveMode);
 	bool changeSplitView();
-	void navigateToFile(FileUtils::MoveMode moveMode);
-	void navigateToFolder(FileUtils::MoveMode moveMode);
+	//void navigateToFile(FileUtils::MoveMode moveMode);
+	//void navigateToFolder(FileUtils::MoveMode moveMode);
+	void navigate(FileUtils::MoveMode moveMode);
 	void resizeImage(ImageView::ScaleMode scaleMode, std::optional<bool> isPlus = std::nullopt);
 	void deleteImageFile();
 	void clear();
@@ -57,7 +53,7 @@ protected:
 	bool eventFilter(QObject* watched, QEvent* event) override;
 
 signals:
-	void deleteKeyPressed(QStringList files , QString nextFile);
+	void deleteKeyPressed(QStringList files);
 
 private:
 	QHBoxLayout* createSlider();
@@ -71,7 +67,7 @@ private: //variable
 	QLabel* ui_qSliderInfo;
 	QHBoxLayout* ui_hBoxBrowser;
 	ImageView* ui_imageView[M_IMAGE_BROWSER_CNT];
-	ImageListInfo m_imageInfo;
+	FileUtils::SzViewerFile m_imageInfo[M_IMAGE_BROWSER_CNT];
 	ImageScale m_imageScale;
 };
 

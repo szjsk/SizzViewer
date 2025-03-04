@@ -184,11 +184,15 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileListBy(QString filePath, Fi
 
         int currentIndex = list.indexOf(filePath);
 
+        if (isPairPage) {
+			currentIndex = currentIndex % 2 == 0 ? currentIndex : currentIndex - 1;
+        }
+
         if (moveMode == Next) {
-            currentIndex += 1;
+            currentIndex += (isPairPage) ? 2 : 1;
 		}
 		else if (moveMode == Prev) {
-			currentIndex -= ((isPairPage == true) ? 2 : 1);
+			currentIndex -= (isPairPage) ? 2 : 1;
 		}
 		else if (moveMode == First) {
 			currentIndex = 0;
@@ -216,22 +220,28 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileListBy(QString filePath, Fi
             SzViewerFile file;
             file.isArchive = true;
             file.fileName = fileName;
+			file.archiveName = zipManager.getZipPath();
             file.fileDataCache = zipManager.getFileData(list.at(currentIndex + i));
 			file.size = zipManager.getFileList().size();
 			file.currentIndex = currentIndex + i;
+			file.fileList = list;
 			result.append(file);
         }
 
         return result;
 	}
 	else {
-		qDebug() << "extractFileListBy : " << filePath;
+		qDebug() << "extractFileListBy : " << filePath << " , " << moveMode << " , " << type;
 
 		QStringList list = getFileList(filePath, type);
         int currentIndex = list.indexOf(filePath);
 
+        if (isPairPage) {
+            currentIndex = currentIndex % 2 == 0 ? currentIndex : currentIndex - 1;
+        }
+
         if (moveMode == Next) {
-            currentIndex += 1;
+            currentIndex += (isPairPage) ? 2 : 1;
         }
         else if (moveMode == Prev) {
             currentIndex -= (isPairPage) ? 2 : 1;
@@ -264,11 +274,14 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileListBy(QString filePath, Fi
             SzViewerFile file;
 
             if (qFile.open(QIODevice::ReadOnly)) {
+                qDebug() << "currentFilePath : " << currentFilePath << " , " << currentIndex + i;
+
                 file.isArchive = false;
                 file.fileName = currentFilePath;
                 file.fileDataCache = qFile.readAll();
                 file.size = list.size();
                 file.currentIndex = currentIndex + i;
+				file.fileList = list;
                 qFile.close();  // 파일 닫기
                 result.append(file);
             }

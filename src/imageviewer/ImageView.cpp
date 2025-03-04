@@ -20,19 +20,24 @@ ImageView::ImageView(QWidget* parent)
 
 void ImageView::clear() {
 	movieStop();
-	if (!m_imageInfo.originPixmap) {
+	if (m_imageInfo.originPixmap) {
 		delete m_imageInfo.originPixmap;
 		m_imageInfo.originPixmap = nullptr;
 	}
 
-	if (!m_imageInfo.changePixmap) {
+	if (m_imageInfo.changePixmap) {
 		delete m_imageInfo.changePixmap;
 		m_imageInfo.changePixmap = nullptr;
 	}
 
-	if (!m_imageInfo.originMovie) {
+	if (m_imageInfo.originMovie) {
+		QBuffer* buffer = qobject_cast<QBuffer*>(m_imageInfo.originMovie->device());
 		delete m_imageInfo.originMovie;
 		m_imageInfo.originMovie = nullptr;
+		if (buffer) {
+			delete buffer;
+		}
+
 	}
 
 	ui_label->clear();
@@ -41,32 +46,36 @@ void ImageView::clear() {
 	//ui_label->setMovie(movie);
 }
 
-void ImageView::loadImage(QString& filePath, ScaleMode scaleMode, int percentage, Align align)
+void ImageView::loadImage(QByteArray data, QString fileName, ScaleMode scaleMode, int percentage, Align align)
 {
+
 	clear();
-	QFileInfo fileInfo(filePath);
-	if (!fileInfo.exists()) {
-		ui_label->setText("" + filePath);
+	if (data.isEmpty()) {
+		ui_label->setText("");
 		return;
 	}
 
-	StatusStore::instance().getImageHistory().addFileInfo(filePath, -1, "");
 
+	QFileInfo fileInfo(fileName);
 	QString suffix = fileInfo.suffix().toLower();
 
-	
+
 	m_imageInfo = ImageInfo();
 
 	if (suffix == "gif") {
 		m_imageInfo.isGif = true;
-		m_imageInfo.originMovie = new QMovie(filePath, QByteArray(), ui_label);
+		QBuffer* buffer = new QBuffer();
+		buffer->setData(data);
+		buffer->open(QIODevice::ReadOnly);
+		m_imageInfo.originMovie = new QMovie(buffer, QByteArray(), ui_label);
 		m_imageInfo.originMovie->jumpToFrame(0);
 		m_imageInfo.originSize = m_imageInfo.originMovie->currentPixmap().size();
 		m_imageInfo.align = align;
 	}
 	else {
 		m_imageInfo.isGif = false;
-		m_imageInfo.originPixmap = new QPixmap(filePath);
+		m_imageInfo.originPixmap = new QPixmap();
+		m_imageInfo.originPixmap->loadFromData(data);
 		m_imageInfo.originSize = m_imageInfo.originPixmap->size();
 		m_imageInfo.align = align;
 	}
@@ -97,7 +106,10 @@ void ImageView::resize(ScaleMode mode, int percentage) {
 	}
 	else {
 		QPixmap newPixMap = getScaledPixmap(m_imageInfo.originPixmap, m_imageInfo.originSize, mode, percentage);
-		m_imageInfo.changePixmap = &newPixMap;
+		if (m_imageInfo.changePixmap) {
+			delete m_imageInfo.changePixmap;
+		}
+		m_imageInfo.changePixmap = new QPixmap(newPixMap);
 		ui_label->setPixmap(*m_imageInfo.changePixmap);
 	}
 	ui_label->adjustSize();
@@ -168,25 +180,23 @@ QPixmap ImageView::getScaledPixmap(QPixmap* pixmap, QSize originSize, ScaleMode 
 
 void ImageView::rotate(int degree, bool isFlip) {
 
-	qDebug() << "degree : " << degree;
-
 	if (m_imageInfo.isGif && m_imageInfo.originMovie) {
 
 		// GIF의 경우 현재 프레임을 가져와서 회전
 		QPixmap currentFrame = m_imageInfo.originMovie->currentPixmap();
 		QTransform transform;
 		if (isFlip) {
-			transform.scale(-1, 1);  
+			transform.scale(-1, 1);
 		}
 		transform.rotate(degree);
 		currentFrame = currentFrame.transformed(transform, Qt::SmoothTransformation);
 	}
-	else if(!m_imageInfo.isGif && m_imageInfo.originPixmap){
-		
+	else if (!m_imageInfo.isGif && m_imageInfo.originPixmap) {
+
 		// 일반 이미지의 경우 QPixmap 회전
 		QTransform transform;
 		if (isFlip) {
-			transform.scale(-1, 1);  
+			transform.scale(-1, 1);
 		}
 		transform.rotate(degree);
 		m_imageInfo.changePixmap = new QPixmap(m_imageInfo.originPixmap->transformed(transform, Qt::SmoothTransformation));
@@ -204,7 +214,11 @@ void ImageView::movieStop() {
 	if (m_imageInfo.isGif && m_imageInfo.originMovie) {
 		m_imageInfo.originMovie->stop();
 		ui_label->setMovie(nullptr);
+		QBuffer* buffer = qobject_cast<QBuffer*>(m_imageInfo.originMovie->device());
 		delete m_imageInfo.originMovie;
 		m_imageInfo.originMovie = nullptr;
+		if (buffer) {
+			delete buffer;
+		}
 	}
 }

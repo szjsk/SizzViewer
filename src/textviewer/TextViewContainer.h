@@ -75,7 +75,7 @@ protected:
     bool eventFilter(QObject* watched, QEvent* event);
 
 signals:
-    void deleteKeyPressed(QStringList files, QString nextFile);
+    void deleteKeyPressed(QStringList files);
 	void searchResultReady(QString searchText, long page, int line);
 
     //variable
