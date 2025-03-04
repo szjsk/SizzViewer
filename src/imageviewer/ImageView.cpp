@@ -213,12 +213,12 @@ void ImageView::rotate(int degree, bool isFlip) {
 void ImageView::movieStop() {
 	if (m_imageInfo.isGif && m_imageInfo.originMovie) {
 		m_imageInfo.originMovie->stop();
-		ui_label->setMovie(nullptr);
+		/*ui_label->setMovie(nullptr);
 		QBuffer* buffer = qobject_cast<QBuffer*>(m_imageInfo.originMovie->device());
 		delete m_imageInfo.originMovie;
 		m_imageInfo.originMovie = nullptr;
 		if (buffer) {
 			delete buffer;
-		}
+		}*/
 	}
 }

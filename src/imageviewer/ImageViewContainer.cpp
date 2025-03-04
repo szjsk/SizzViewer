@@ -40,10 +40,9 @@ ImageViewContainer::ImageViewContainer(QWidget* parent)
 		ui_qSliderInfo->setText(QString("count: %1 / %2").arg(value+1).arg(ui_qSlider->maximum()));
 
 		if (m_imageInfo[0].currentIndex == value) {
-			qDebug() << "same index " << value;
+			return;
 		}
 		else {
-			qDebug() << "slider value changed : " << value;
 			int newValue = m_imageInfo[0].fileList.size() <= value ? m_imageInfo[0].fileList.size() - 1 : value;
 			initImageFile(m_imageInfo[0].fileList.at(newValue), FileUtils::MoveMode::None);
 		}
@@ -86,7 +85,7 @@ void ImageViewContainer::initImageFile(QString filePath, FileUtils::MoveMode mov
 		return;
 	}
 	else if (moveMode == FileUtils::Prev && files.isEmpty() && StatusStore::instance().getImageSettings().isAutoNext()) {
-		initImageFile(filePath, FileUtils::PrevFolder);
+		initImageFile(filePath, FileUtils::PrevFolderLastFile);
 		return;
 	}
 	else if (files.isEmpty()) {
@@ -112,7 +111,7 @@ void ImageViewContainer::initImageFile(QString filePath, FileUtils::MoveMode mov
 	}
 	ui_qSlider->setMaximum(files.at(0).size);
 	ui_qSlider->setValue(files.at(0).currentIndex);
-	ui_qSliderInfo->setText(QString("count: %1 / %2").arg(files.at(0).currentIndex + 1).arg(ui_qSlider->maximum()));
+	ui_qSliderInfo->setText(QString("count: %1 / %2").arg(files.at(0).currentIndex+1).arg(ui_qSlider->maximum()));
 
 	this->window()->setWindowTitle(QString("SzViewer - %1       /        %2").arg(m_imageInfo[0].fileName).arg(m_imageInfo[1].fileName));
 
@@ -157,97 +156,11 @@ bool ImageViewContainer::changeSplitView() {
 
 	ui_imageView[1]->setVisible(newSplit);
 	initImageFile(m_imageInfo[0].fileName, FileUtils::None);
-	//resizeImage(m_imageScale.scaleMode, m_imageScale.percentage);
+
 	return newSplit;
 
 }
 
-/*void ImageViewContainer::navigateToFolder(FileUtils::MoveMode moveMode) {
-
-	const ImageListInfo& imageInfo = m_imageInfo;
-
-	if (imageInfo.fileList.isEmpty() ||
-		imageInfo.currentIndex >= imageInfo.fileList.size() || imageInfo.currentIndex < 0) {
-		return;
-	}
-
-	QString filePath = imageInfo.fileList.at(imageInfo.currentIndex);
-	QString file;
-
-	if (moveMode == FileUtils::NextFolder) {
-		file = FileUtils::moveFolder(filePath, FileUtils::MoveMode::NextFolder, FileUtils::IMAGE);
-	}
-	else if (moveMode == FileUtils::PrevFolder) {
-		file = FileUtils::moveFolder(filePath, FileUtils::MoveMode::PrevFolder, FileUtils::IMAGE);
-	}
-
-	if (file.isEmpty()) {
-		QMessageBox::warning(this, "warning", "can not find next/prev image folder.");
-		return;
-	}
-
-	loadFileList(file);
-
-}*/
-/*
-void ImageViewContainer::navigateToFile(FileUtils::MoveMode moveMode) {
-
-	ImageListInfo* imageInfo = &m_imageInfo;
-	const ImageScale& imageScale = m_imageScale;
-
-
-	bool isSplit = StatusStore::instance().getImageSettings().isSplitView();
-	// split 모드이면 2씩 이동, 아니면 1씩 이동
-	int step = isSplit ? 2 : 1;
-
-	int currentIndex = imageInfo->currentIndex;
-	// 이동 모드에 따른 인덱스 변경
-	if (moveMode == FileUtils::Next) {
-		currentIndex += step;
-	}
-	else if (moveMode == FileUtils::Prev) {
-		currentIndex -= step;
-	}
-	else if (moveMode == FileUtils::First) {
-		currentIndex = 0;
-	}
-	else if (moveMode == FileUtils::Last) {
-		currentIndex = imageInfo->fileList.size() - 1;
-	}
-	// moveMode가 None인 경우 m_currentIndex는 그대로 사용
-
-	// 자동 다음 페이지 이동.
-	if (currentIndex < 0 && StatusStore::instance().getImageSettings().isAutoNext()) {
-		navigateToFolder(FileUtils::PrevFolder);
-		return;
-	}
-	else if (currentIndex >= imageInfo->fileList.size() && StatusStore::instance().getImageSettings().isAutoNext()) {
-		navigateToFolder(FileUtils::NextFolder);
-		return;
-	}else if (currentIndex < 0 || currentIndex >= imageInfo->fileList.size()) {
-		return;
-	}
-
-	// 분할 모드인 경우 첫 번째 이미지는 짝수 인덱스가 되도록 보정
-	if (isSplit && (currentIndex % 2) != 0 && currentIndex > 0) {
-			currentIndex--;
-		}
-	QString fileName[M_IMAGE_BROWSER_CNT];
-	for (int i = 0; i < M_IMAGE_BROWSER_CNT; i++) {
-		if (ui_imageView[i]->isVisible() && currentIndex + i < imageInfo->fileList.size()) {
-			fileName[i] = imageInfo->fileList.at(currentIndex + i);
-			ui_imageView[i]->loadImage(fileName[i], imageScale.scaleMode, imageScale.percentage, getAlign(i));
-		}
-		else {
-			ui_imageView[i]->clear();
-		}
-	}
-
-	imageInfo->currentIndex = currentIndex;
-	ui_qSlider->setValue(imageInfo->currentIndex);
-	this->window()->setWindowTitle(QString("SzViewer - %1       /        %2").arg(fileName[0]).arg(fileName[1]));
-}
-*/
 ImageView::Align ImageViewContainer::getAlign(int containerIdx) {
 
 	int newIdx = ui_hBoxBrowser->direction() == QBoxLayout::LeftToRight ? containerIdx : containerIdx - 1;
@@ -353,37 +266,23 @@ bool ImageViewContainer::eventFilter(QObject* watched, QEvent* event) {
 		else if (keyEvent->key() == Qt::Key_Delete) {
 			deleteImageFile();
 		}
-		else if (keyEvent->key() == Qt::Key_F2 && !(keyEvent->modifiers() & Qt::ControlModifier)) {
-			// m_imageInfo.fileList = renameFile(m_imageInfo.fileList, m_imageInfo.currentIndex, 0, m_imageScale);
+		else if (keyEvent->key() == Qt::Key_F2) {
+			if (StatusStore::instance().getImageSettings().isSplitView()) {
+				QMessageBox::warning(this, "warning", "can not rename in spitMode");
+				return false;
+			}
+			QString fileName = m_imageInfo[0].isArchive ? m_imageInfo[0].archiveName : m_imageInfo[0].fileName;
+			emit renameFile(fileName);
 		}
-		else if (keyEvent->key() == Qt::Key_F3 && StatusStore::instance().getImageSettings().isSplitView()) {
-			//  m_imageInfo.fileList = renameFile(m_imageInfo.fileList, m_imageInfo.currentIndex+1, 1, m_imageScale);
-		}
-		else if (keyEvent->key() == Qt::Key_F2 && keyEvent->modifiers() & Qt::ControlModifier) {
-			/* QString newPath = renameFolder(m_imageInfo.fileList, m_imageInfo.currentIndex);
-			 if (newPath.isEmpty() == false)
-			 {
-				 initImageFile(newPath, );
-			 }*/
+		else if (keyEvent->key() == Qt::Key_F3 /* && keyEvent->modifiers() & Qt::ControlModifier*/) {
+			QString fileName = m_imageInfo[0].isArchive ? m_imageInfo[0].archiveName : m_imageInfo[0].fileName;
+			emit renameFolder(fileName);
 		}
 		else if (keyEvent->key() == Qt::Key_N) {
-			ui_hBoxBrowser->setDirection(ui_hBoxBrowser->direction() == QBoxLayout::LeftToRight
-				? QBoxLayout::RightToLeft
-				: QBoxLayout::LeftToRight);
-			applySettings();
+			swapImageBox();
 		}
-		else if (keyEvent->key() == Qt::Key_BracketLeft) {
-			/*m_imageInfo.fileList.insert(m_imageInfo.currentIndex, "");
-			navigateToFile(FileUtils::None);
-			ui_qSlider->setMaximum(m_imageInfo.fileList.size() - 1);*/
 
-		}
-		else if (keyEvent->key() == Qt::Key_BracketRight) {
-			/*m_imageInfo.fileList.insert(m_imageInfo.currentIndex + 1, "");
-			navigateToFile(FileUtils::None);
-			ui_qSlider->setMaximum(m_imageInfo.fileList.size() - 1);*/
-		}
-		return false;  // 이벤트를 가로채서 처리 완료
+		return false; 
 	}
 
 
@@ -404,79 +303,35 @@ bool ImageViewContainer::eventFilter(QObject* watched, QEvent* event) {
 	return QWidget::eventFilter(watched, event);
 }
 
-QStringList ImageViewContainer::renameFile(QStringList fileList, int fileIdx, int containerIdx, ImageScale imageScale) {
-	if (fileList.isEmpty() || fileIdx >= fileList.size()) {
-		return fileList;
-	}
+bool ImageViewContainer::swapImageBox() {
 
-	QString currentFile = fileList.at(fileIdx);
-	QFileInfo fileInfo(currentFile);
-	QString oldFileName = fileInfo.completeBaseName();
-	QString suffix = fileInfo.suffix();
+	bool isSwap = ui_hBoxBrowser->direction() == QBoxLayout::LeftToRight;
 
-	bool ok;
-	QString newFileName = QInputDialog::getText(this, "(Rename File)", "please new file name:", QLineEdit::Normal, oldFileName, &ok);
-
-	if (ok && !newFileName.isEmpty()) {
-		ui_imageView[containerIdx]->movieStop();
-		QDir dir = fileInfo.dir();
-		QString newPath = dir.filePath(newFileName + "." + suffix);
-
-		if (QFile::rename(currentFile, newPath)) {
-			// 파일명 변경 성공
-			m_imageInfo[containerIdx].fileName = newPath;
-			fileList[fileIdx] = newPath;
-			return fileList;
-		}
-		else {
-			QMessageBox::warning(this, "warning", "can not rename.");
-		}
-	}
-	return fileList;
+	ui_hBoxBrowser->setDirection(isSwap ? QBoxLayout::RightToLeft : QBoxLayout::LeftToRight);
+	applySettings();
+	return isSwap;
 }
 
-QString ImageViewContainer::renameFolder(QStringList fileList, int fileIdx) {
-	if (fileList.isEmpty() || fileIdx >= fileList.size()) {
-		return QString();
-	}
-
-	QString currentFile = fileList.at(fileIdx);
-	QFileInfo fileInfo(currentFile);
-	QDir dir = fileInfo.dir();
-	QString oldFolderName = dir.dirName();
-	dir.cdUp();
-	QString parentPath = dir.absolutePath();
-
-	bool ok;
-	QString newFolderName = QInputDialog::getText(this, "[Rename Folder]", "please new folder name:", QLineEdit::Normal, oldFolderName, &ok);
-
-	if (ok && !newFolderName.isEmpty()) {
-		QString o = QDir::cleanPath(parentPath + QDir::separator() + oldFolderName);
-		QString n = QDir::cleanPath(parentPath + QDir::separator() + newFolderName);
-		ui_imageView[0]->movieStop();
-		ui_imageView[1]->movieStop();
-		qDebug() << " o : " << o << " n : " << n;
-		if (fileInfo.dir().rename(o, n)) {
-			return QDir::cleanPath(parentPath + QDir::separator() + newFolderName + QDir::separator() + fileInfo.fileName());
-		}
-		else {
-			QMessageBox::warning(this, "warning", "can not rename.");
-		}
-	}
-	return QString();
-}
 
 void ImageViewContainer::deleteImageFile() {
 
 	QStringList files;
 
-	for (int i = 0;i < M_IMAGE_BROWSER_CNT;i++) {
-		if (m_imageInfo[i].fileName.isEmpty() == false) {
-			files.append(m_imageInfo[0].fileName);
+	if (m_imageInfo[0].fileName.isEmpty()) {
+		return;
+	}
+	else if (m_imageInfo[0].isArchive) {
+		files.append(m_imageInfo[0].archiveName);
+	}
+	else {
+		for (int i = 0;i < M_IMAGE_BROWSER_CNT;i++) {
+			if (m_imageInfo[i].fileName.isEmpty() == false) {
+				files.append(m_imageInfo[i].fileName);
+			}
 		}
 	}
 
-	emit deleteKeyPressed(files);
+	emit deleteKeyPressed(files, FileUtils::IMAGE);
 }
 
 void ImageViewContainer::rotate(int degree) {

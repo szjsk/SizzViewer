@@ -35,6 +35,7 @@ public:
     };
 
     struct TextFileInfo {
+        QString zipFileName;
 		QString fileName;
         int currentPageIdx;
         long currentPosition;
@@ -45,14 +46,14 @@ public:
     TextViewContainer(QWidget* parent = nullptr);
     ~TextViewContainer();
     void initTextFile(QString filePath, FileUtils::MoveMode moveMode);
-    void nextPage(const TextFileInfo* fileInfo);
-    void prevPage(const TextFileInfo* fileInfo);
+    void nextPage(TextFileInfo* fileInfo);
+    void prevPage(TextFileInfo* fileInfo);
     bool changeSplitView();
     void findPage(const QString&, long page, long line);
 	void deleteFile(const TextFileInfo* fileInfo);
 	void clear();
     int findTextPageBy(const TextFileInfo* fileInfo, long position);
-    const TextFileInfo* getFileInfo();
+    TextFileInfo* getFileInfo();
     void performSearch(QString searchText, const TextFileInfo* fileInfo);
     void refreshPage(long textPosition);
     void changeStyle(TextSettingProps s);
@@ -67,16 +68,15 @@ private:
     void refreshStyle(TextSettingProps settings, QTextBrowser* tb);
     void applyLineSpacing(QTextBrowser* tb);
     void saveHistory(HistoryProps& history, const TextFileInfo* fileInfo);
-    SavedFileInfo loadHistory(HistoryProps history, QString filePath);
-    void testText();
 	bool isUtf8Text(QByteArray& data);
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
 
 signals:
-    void deleteKeyPressed(QStringList files);
+    void deleteKeyPressed(QStringList files, FileUtils::SupportType type);
 	void searchResultReady(QString searchText, long page, int line);
+    void renameFile(QString file);
 
     //variable
 private:

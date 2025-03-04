@@ -28,9 +28,11 @@ void HistoryProps::setFixedState(SavedFileInfo fileInfo, bool isFixed) {
 }
 
 void HistoryProps::addFileInfo(QString filename, long textPosition, QString textLine) {
+
     if (filename.isEmpty()) {
         return;
     }
+
 	SavedFileInfo fileInfo;
     fileInfo.fileName = filename;
     fileInfo.textPosition = textPosition;
@@ -40,6 +42,7 @@ void HistoryProps::addFileInfo(QString filename, long textPosition, QString text
 
     m_fileInfos.insert(fileInfo.fileName, fileInfo);
     m_fileInfos = caclulateHistorySize(m_fileInfos);
+
 }
 
 void HistoryProps::removeAllNoFixed() {
@@ -66,6 +69,9 @@ QHash<QString, SavedFileInfo> HistoryProps::caclulateHistorySize(QHash<QString, 
     QList<SavedFileInfo> bookmarked;
     QList<SavedFileInfo> unbookmarked;
     for (const SavedFileInfo& info : infos) {
+		if (info.fileName.isEmpty()) {
+			continue;
+		}
         if (info.isBookmarked) {
             bookmarked.append(info);
         }

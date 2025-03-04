@@ -48,17 +48,18 @@ public:
 	void rotate(int degree);
 	void flip();
 	void applySettings();
+	bool swapImageBox();
 
 protected:
 	bool eventFilter(QObject* watched, QEvent* event) override;
 
 signals:
-	void deleteKeyPressed(QStringList files);
+	void deleteKeyPressed(QStringList files, FileUtils::SupportType type);
+	void renameFile(QString file);
+	void renameFolder(QString file);
 
 private:
 	QHBoxLayout* createSlider();
-	QStringList renameFile(QStringList fileList, int fileIdx, int containerIdx , ImageScale imageScale);
-	QString renameFolder(QStringList fileList, int fileIdx);
 	ImageView::Align getAlign(int containerIdx);
 
 private: //variable

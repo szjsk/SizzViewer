@@ -14,10 +14,19 @@ SzViewer::SzViewer(QWidget* parent)
 	ui_textViewContainer = new TextViewContainer(this);
 	ui_stackedWidget->addWidget(ui_textViewContainer);
 	connect(ui_textViewContainer, &TextViewContainer::deleteKeyPressed, this, &SzViewer::handleDeleteKey);
+	connect(ui_textViewContainer, &TextViewContainer::renameFile, this, [this](QString fileName) {
+		openFile(FileUtils::renameFile(fileName, this));
+		});
 
 	ui_imageViewContainer = new ImageViewContainer(this);
 	ui_stackedWidget->addWidget(ui_imageViewContainer);
 	connect(ui_imageViewContainer, &ImageViewContainer::deleteKeyPressed, this, &SzViewer::handleDeleteKey);
+	connect(ui_imageViewContainer, &ImageViewContainer::renameFile, this, [this](QString fileName) {
+		openFile(FileUtils::renameFile(fileName, this));
+		});
+	connect(ui_imageViewContainer, &ImageViewContainer::renameFolder, this, [this](QString folderName) {
+		openFile(FileUtils::renameFolder(folderName, this));
+		});
 
 	this->setCentralWidget(ui_stackedWidget);
 
@@ -54,30 +63,46 @@ SzViewer::~SzViewer()
 	settings.setValue("geometry", this->geometry());
 }
 
-void SzViewer::handleDeleteKey(QStringList files) {
-	//todo nextFile 제외
-	QString nextFolderFile = ui_imageViewContainer->isVisible() ? FileUtils::moveFolder(files[0], FileUtils::NextFolder, FileUtils::IMAGE) : QString();
+void SzViewer::handleDeleteKey(QStringList files, FileUtils::SupportType type) {
+	QStringList fileList = FileUtils::getFileList(files.at(0), type);
+
+	QString prevFolder = FileUtils::moveFolder(files.at(0), FileUtils::MoveMode::Prev, type);
+	QString nextFolder = FileUtils::moveFolder(files.at(0), FileUtils::MoveMode::Next, type);
+
 
 	DeleteFilesDialog dialog(files, m_deleteFolder, this);
 	if (dialog.exec() == QDialog::Accepted) {
 		this->window()->setWindowTitle(QString("SzViewer"));
+		QStringList deletedData = dialog.getDeletedFiles();
+		if (dialog.isDeleteFolderChecked() && !deletedData.isEmpty()) {
+			openFile(nextFolder.isEmpty() ? prevFolder : nextFolder);
+		}
+		else if(!deletedData.isEmpty()){
+			//deletedData는 파일 정렬 순서대로 삭제되어 넘어온다. last index가 마지막 삭제된 파일.
+			//다음 파일이 존재하면 다음 파일로 이동 
+			int nextIdx = fileList.indexOf(deletedData.at(deletedData.size() - 1)) + 1;
+			if (nextIdx < fileList.size()) {
+				openFile(fileList.at(nextIdx));
+				return;
+			}
+			//다음 파일이 없고. 이전 파일이 존재한다면 (마지막 파일 삭제시) 
+			int prevIdx = fileList.indexOf(deletedData.at(0)) - 1;
+			if (prevIdx >= 0) {
+				openFile(fileList.at(prevIdx));
+				return;
+			}
 
-		m_deleteFolder = dialog.isDeleteFolderChecked();
-		if (m_deleteFolder && ui_imageViewContainer->isVisible()) {
-			//ui_imageViewContainer->loadFileList(nextFolderFile);
-		}
-		//else if (!nextFile.isEmpty()) {
-			//openFile(nextFile);
-		//}
-		else if (ui_imageViewContainer->isVisible()) {
-			ui_imageViewContainer->clear();
-		}
-		else if (!ui_imageViewContainer->isVisible()) {
-			ui_textViewContainer->clear();
+			//모든 파일이 삭제된 상태라면 초기화
+			if (type == FileUtils::SupportType::IMAGE) {
+				ui_imageViewContainer->clear();
+			}
+			else if (type == FileUtils::SupportType::TEXT) {
+				ui_textViewContainer->clear();
+			}
 		}
 	}
 	else {
-		openFile(files[0]);
+		//openFile(files[0]);
 		qDebug() << "delete cancel";
 	}
 }
@@ -148,6 +173,10 @@ void SzViewer::addHistoryCheckBox(QMenu* fileMenu, HistoryProps props, HistoryPr
 	for (int i = 0; i < history.size(); i++) {
 		SavedFileInfo saveFileInfo = history.at(i);
 		QString fileName = saveFileInfo.fileName;
+		if (fileName.isEmpty()) {
+			continue;
+		}
+
 		HistoryCheckBoxItem* checkBox = new HistoryCheckBoxItem(fileName, fileMenu);
 		checkBox->setChecked(saveFileInfo.isBookmarked);
 
@@ -155,13 +184,13 @@ void SzViewer::addHistoryCheckBox(QMenu* fileMenu, HistoryProps props, HistoryPr
 		widgetAction->setDefaultWidget(checkBox);
 		fileMenu->addAction(widgetAction);
 
+		//체크박스 클릭 시 이벤트 처리
 		connect(checkBox, &HistoryCheckBoxItem::indicatorClicked, [this, fileName, saveFileInfo, type](bool checked) {
-			qDebug() << "체크박스 인디케이터 클릭:" << fileName << checked;
 			StatusStore::instance().savedFixedState(type, fileName, checked);
 			});
 
+		//라벨 클릭 시 이벤트 처리
 		connect(checkBox, &HistoryCheckBoxItem::labelClicked, [this, fileName, fileMenu]() {
-			qDebug() << "라벨 클릭:" << fileName;
 			openFile(fileName);
 			fileMenu->close();  // 팝업 닫기
 			});
@@ -249,6 +278,9 @@ void SzViewer::dropEvent(QDropEvent* event)
 }
 
 void SzViewer::openFile(QString fileName) {
+	if (fileName.isEmpty()) {
+		return;
+	}
 
 	QString findFileName = FileUtils::findFileInSubDir(fileName);
 	ZipArchiveManager& zipManager = ZipArchiveManager::instance();

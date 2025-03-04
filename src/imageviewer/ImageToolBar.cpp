@@ -95,6 +95,36 @@ ImageToolBar::ImageToolBar(QWidget* parent, ImageViewContainer* container)
     connect(roationLAction, &QAction::triggered, this, [this, container]() {container->rotate(-45);});
     this->addAction(roationLAction);
 
+    QAction* swapAction = new QAction(QIcon(":/icon/resources/icon/switch_access_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"), "swap", this);
+    swapAction->setToolTip("swap left / right box (n)");
+    connect(swapAction, &QAction::triggered, this, [this, container, swapAction]() {
+        container->swapImageBox();
+        });
+    this->addAction(swapAction);
+
+    ImageView::Align state = StatusStore::instance().getImageSettings().getAlign();
+    QString iconName = state == ImageView::Align::CENTER_SPREAD ? ":/icon/resources/icon/compare_arrows_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg" :
+        ":/icon/resources/icon/swap_horiz_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg";
+    QAction* spreadAction = new QAction(QIcon(iconName), "spread", this);
+    spreadAction->setToolTip("spread");
+    connect(spreadAction, &QAction::triggered, this, [this, container, spreadAction]() {
+
+        ImageView::Align state = StatusStore::instance().getImageSettings().getAlign();
+
+        if (state == ImageView::Align::CENTER_SPREAD) {
+            StatusStore::instance().getImageSettings().setAlign(ImageView::Align::CENTER);
+            container->applySettings();
+            spreadAction->setIcon(QIcon(":/icon/resources/icon/compare_arrows_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"));
+        }
+        else {
+            StatusStore::instance().getImageSettings().setAlign(ImageView::Align::CENTER_SPREAD);
+            container->applySettings();
+            spreadAction->setIcon(QIcon(":/icon/resources/icon/swap_horiz_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg"));
+        }
+        });
+    this->addAction(spreadAction);
+
+
     QAction* fullScreenAction = new QAction(QIcon(":/icon/resources/icon/zoom_out_map_24dp_1F1F1F.svg"), "full-screan", this);
     fullScreenAction->setToolTip("Full Screen (f)");
     connect(fullScreenAction, &QAction::triggered, this, [this, container]() {container->toggleFullScreen();});

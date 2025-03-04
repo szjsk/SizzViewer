@@ -16,16 +16,18 @@
 class DeleteFilesDialog : public QDialog {
     Q_OBJECT
 
-public: //method
+public: 
     explicit DeleteFilesDialog(const QStringList& files, bool isFolder, QWidget* parent = nullptr);
     QStringList getSelectedFiles() const;
     bool isDeleteFolderChecked() const;
+    QStringList getDeletedFiles() const;
 
 private: //variable
     QListWidget* m_fileListWidget;
     QCheckBox* m_deleteFolderCheckBox;
     QPushButton* m_okButton;
     QPushButton* m_cancelButton;
+    QStringList m_deletedFiles;
 
 private: //method
     void deleteFileOrFolder();

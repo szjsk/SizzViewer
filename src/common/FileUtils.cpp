@@ -16,27 +16,6 @@ void FileUtils::sortByWindow(QStringList &fileList) {
         });
 }
 
-QString FileUtils::MoveFile(QStringList &fileList, QString currentFile, int moveIdx) {
-
-	if (fileList.isEmpty() || currentFile.isEmpty()) {
-        return QString();
-	}
-
-    QFileInfo fileInfo(currentFile);
-    QDir dir = fileInfo.dir();
-
-	fileList.indexOf(currentFile);
-
-    int currentIndex = fileList.indexOf(currentFile);
-    int idx = currentIndex + moveIdx;
-    if (currentIndex > -1 && idx < fileList.size() && idx > -1) {
-        return isArchivePath(fileList.at(idx)) ? fileList.at(idx) : dir.absoluteFilePath(fileList.at(idx));
-    }
-
-    return QString();
-
-}
-
 QStringList FileUtils::getFileList(QString currentFile, SupportType type) {
 	QFileInfo fileInfo(currentFile);
 	QDir dir = fileInfo.dir();
@@ -138,7 +117,7 @@ QString FileUtils::moveFolder(QString fileName, MoveMode moveMode, SupportType t
     if (moveMode == FileUtils::MoveMode::NextFolder) {
         nextIndex = index + 1;
     }
-    else if (moveMode == FileUtils::MoveMode::PrevFolder) {
+    else if (moveMode == FileUtils::MoveMode::PrevFolder || moveMode == FileUtils::MoveMode::PrevFolderLastFile) {
         nextIndex = index - 1;
     }
 
@@ -162,7 +141,7 @@ QString FileUtils::moveFolder(QString fileName, MoveMode moveMode, SupportType t
     sortByWindow(newFilePaths);
 
     if (!newFilePaths.isEmpty()) {
-        int idx = moveMode == MoveMode::NextFolder ? 0 : newFilePaths.size() - 1;
+        int idx = moveMode == MoveMode::PrevFolderLastFile ? newFilePaths.size() - 1 : 0;
         QString file = nextFolder.absoluteFilePath(newFilePaths[idx]);
         return file;
 	}
@@ -179,118 +158,128 @@ QList<FileUtils::SzViewerFile> FileUtils::extractFileListBy(QString filePath, Fi
 	}
 
     if (isArchivePath(filePath)) {
-		ZipArchiveManager& zipManager = ZipArchiveManager::instance();
-        QStringList list = zipManager.getFileList();
-
-        int currentIndex = list.indexOf(filePath);
-
-        if (isPairPage) {
-			currentIndex = currentIndex % 2 == 0 ? currentIndex : currentIndex - 1;
-        }
-
-        if (moveMode == Next) {
-            currentIndex += (isPairPage) ? 2 : 1;
-		}
-		else if (moveMode == Prev) {
-			currentIndex -= (isPairPage) ? 2 : 1;
-		}
-		else if (moveMode == First) {
-			currentIndex = 0;
-		}
-		else if (moveMode == Last) {
-            currentIndex = (list.size() % 2) == 0 && isPairPage ? list.size() - 2 : list.size() - 1;
-		}
-		else if (moveMode == NextFolder) {//압축파일일때는 폴더가 아닌 다음 파일로 이동.
-            return extractFileListBy(zipManager.getZipPath(), FileUtils::MoveMode::Next, type, isPairPage);
-		}
-		else if (moveMode == PrevFolder) {
-            return extractFileListBy(zipManager.getZipPath(), FileUtils::MoveMode::Prev, type, isPairPage);
-        }
-
-		int size = isPairPage ? 2 : 1;
-        QList<FileUtils::SzViewerFile> result;
-        for (int i = 0; i < size; i++) {
-            int currentIdx = currentIndex + i;  
-
-            if (currentIdx < 0 || currentIdx >= list.size()) {
-				continue;
-			}
-
-            QString fileName = list.at(currentIndex + i);
-            SzViewerFile file;
-            file.isArchive = true;
-            file.fileName = fileName;
-			file.archiveName = zipManager.getZipPath();
-            file.fileDataCache = zipManager.getFileData(list.at(currentIndex + i));
-			file.size = zipManager.getFileList().size();
-			file.currentIndex = currentIndex + i;
-			file.fileList = list;
-			result.append(file);
-        }
-
-        return result;
+		return extractArchiveInfos(filePath, moveMode, type, isPairPage);
 	}
 	else {
-		qDebug() << "extractFileListBy : " << filePath << " , " << moveMode << " , " << type;
-
-		QStringList list = getFileList(filePath, type);
-        int currentIndex = list.indexOf(filePath);
-
-        if (isPairPage) {
-            currentIndex = currentIndex % 2 == 0 ? currentIndex : currentIndex - 1;
-        }
-
-        if (moveMode == Next) {
-            currentIndex += (isPairPage) ? 2 : 1;
-        }
-        else if (moveMode == Prev) {
-            currentIndex -= (isPairPage) ? 2 : 1;
-        }
-        else if (moveMode == First) {
-            currentIndex = 0;
-        }
-        else if (moveMode == Last) {
-            currentIndex = (list.size() % 2) == 0 && isPairPage ? list.size() - 2 : list.size() - 1;
-        }
-        else if (moveMode == NextFolder) {//압축파일일때는 폴더가 아닌 다음 파일로 이동.
-			QString newFilePath = moveFolder(filePath, FileUtils::MoveMode::NextFolder, type);
-            return extractFileListBy(newFilePath, FileUtils::MoveMode::First, type, isPairPage);
-        }
-        else if (moveMode == PrevFolder) {
-            QString newFilePath = moveFolder(filePath, FileUtils::MoveMode::PrevFolder, type);
-            return extractFileListBy(newFilePath, FileUtils::MoveMode::First, type, isPairPage);
-        }
-
-        int size = isPairPage ? 2 : 1;
-        QList<FileUtils::SzViewerFile> result;
-        for (int i = 0; i < size; i++) {
-
-            int currentIdx = currentIndex + i;
-            if (currentIdx < 0 || currentIdx >= list.size()) {           
-                continue;
-            }
-            QString currentFilePath = list.at(currentIdx);
-            QFile qFile(currentFilePath);
-            SzViewerFile file;
-
-            if (qFile.open(QIODevice::ReadOnly)) {
-                qDebug() << "currentFilePath : " << currentFilePath << " , " << currentIndex + i;
-
-                file.isArchive = false;
-                file.fileName = currentFilePath;
-                file.fileDataCache = qFile.readAll();
-                file.size = list.size();
-                file.currentIndex = currentIndex + i;
-				file.fileList = list;
-                qFile.close();  // 파일 닫기
-                result.append(file);
-            }
-        }
-
-        return result;
+        return extractFileInfos(filePath, moveMode, type, isPairPage);
 
 	}
 }
+
+QList<FileUtils::SzViewerFile> FileUtils::extractFileInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
+
+
+    QStringList list = getFileList(filePath, type);
+    int currentIndex = list.indexOf(filePath);
+
+    if (isPairPage) {
+        currentIndex = currentIndex % 2 == 0 ? currentIndex : currentIndex - 1;
+    }
+
+    if (moveMode == Next) {
+        currentIndex += (isPairPage) ? 2 : 1;
+    }
+    else if (moveMode == Prev) {
+        currentIndex -= (isPairPage) ? 2 : 1;
+    }
+    else if (moveMode == First) {
+        currentIndex = 0;
+    }
+    else if (moveMode == Last) {
+        currentIndex = (list.size() % 2) == 0 && isPairPage ? list.size() - 2 : list.size() - 1;
+    }
+    else if (moveMode == NextFolder) {//압축파일일때는 폴더가 아닌 다음 파일로 이동.
+        QString newFilePath = moveFolder(filePath, FileUtils::MoveMode::NextFolder, type);
+        return extractFileListBy(newFilePath, FileUtils::MoveMode::None, type, isPairPage);
+    }
+    else if (moveMode == PrevFolder || moveMode == PrevFolderLastFile) {
+        QString newFilePath = moveFolder(filePath, moveMode, type);
+        return extractFileListBy(newFilePath, FileUtils::MoveMode::None, type, isPairPage);
+    }
+
+    int size = isPairPage ? 2 : 1;
+    QList<FileUtils::SzViewerFile> result;
+    for (int i = 0; i < size; i++) {
+
+        int currentIdx = currentIndex + i;
+        if (currentIdx < 0 || currentIdx >= list.size()) {
+            continue;
+        }
+        QString currentFilePath = list.at(currentIdx);
+        QFile qFile(currentFilePath);
+        SzViewerFile file;
+
+        if (qFile.open(QIODevice::ReadOnly)) {
+
+            file.isArchive = false;
+            file.fileName = currentFilePath;
+            file.fileDataCache = qFile.readAll();
+            file.size = list.size();
+            file.currentIndex = currentIndex + i;
+            file.fileList = list;
+            qFile.close();  // 파일 닫기
+            result.append(file);
+        }
+    }
+
+    return result;
+}
+
+QList<FileUtils::SzViewerFile> FileUtils::extractArchiveInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage) {
+
+    ZipArchiveManager& zipManager = ZipArchiveManager::instance();
+    QStringList list = zipManager.getFileList();
+
+    int currentIndex = list.indexOf(filePath);
+
+    if (isPairPage) {
+        currentIndex = currentIndex % 2 == 0 ? currentIndex : currentIndex - 1;
+    }
+
+    if (moveMode == Next) {
+        currentIndex += (isPairPage) ? 2 : 1;
+    }
+    else if (moveMode == Prev) {
+        currentIndex -= (isPairPage) ? 2 : 1;
+    }
+    else if (moveMode == First) {
+        currentIndex = 0;
+    }
+    else if (moveMode == Last) {
+        currentIndex = (list.size() % 2) == 0 && isPairPage ? list.size() - 2 : list.size() - 1;
+    }
+    else if (moveMode == NextFolder) {//압축파일일때는 폴더가 아닌 다음 파일로 이동.
+        return extractFileListBy(zipManager.getZipPath(), FileUtils::MoveMode::Next, type, isPairPage);
+    }
+    else if (moveMode == PrevFolder || moveMode == PrevFolderLastFile) {
+        return extractFileListBy(zipManager.getZipPath(), FileUtils::MoveMode::Prev, type, isPairPage);
+    }
+
+    int size = isPairPage ? 2 : 1;
+    QList<FileUtils::SzViewerFile> result;
+    for (int i = 0; i < size; i++) {
+        int currentIdx = currentIndex + i;
+
+        if (currentIdx < 0 || currentIdx >= list.size()) {
+            continue;
+        }
+
+        QString fileName = list.at(currentIndex + i);
+        SzViewerFile file;
+        file.isArchive = true;
+        file.fileName = fileName;
+        file.archiveName = zipManager.getZipPath();
+        file.fileDataCache = zipManager.getFileData(list.at(currentIndex + i));
+        file.size = zipManager.getFileList().size();
+        file.currentIndex = currentIndex + i;
+        file.fileList = list;
+        result.append(file);
+    }
+
+    return result;
+
+}
+
 
 bool FileUtils::isArchivePath(QString filePath) {
 	return filePath.startsWith(ZipArchiveManager::ARCHIVE_FILE_PREFIX);
@@ -298,6 +287,7 @@ bool FileUtils::isArchivePath(QString filePath) {
 
 
 void FileUtils::moveToTrash(QString filePath) {
+
 #ifdef Q_OS_WIN
     // Windows에서 파일을 휴지통으로 이동
     QString nativeFilePath = QDir::toNativeSeparators(filePath);
@@ -355,4 +345,57 @@ void FileUtils::moveFolderToTrash(QString folderPath) {
     QDir dir(folderPath);
     dir.removeRecursively();
 #endif
+}
+
+
+
+QString FileUtils::renameFile(QString currentFile, QWidget* parent) {
+
+    QFileInfo fileInfo(currentFile);
+    QString oldFileName = fileInfo.completeBaseName();
+    QString suffix = fileInfo.suffix();
+
+    bool ok;
+    QString newFileName = QInputDialog::getText(parent, "(Rename File)", "please new file name:", QLineEdit::Normal, oldFileName, &ok);
+
+    if (ok && !newFileName.isEmpty()) {
+     //   ui_imageView[containerIdx]->movieStop();
+        QDir dir = fileInfo.dir();
+        QString newPath = dir.filePath(newFileName + "." + suffix);
+
+        if (QFile::rename(currentFile, newPath)) {
+            return newPath;
+        }
+        else {
+            QMessageBox::warning(parent, "warning", "can not rename.");
+        }
+    }
+    return QString();
+}
+
+QString FileUtils::renameFolder(QString currentFile, QWidget* parent) {
+
+    QFileInfo fileInfo(currentFile);
+    QString fileName = fileInfo.fileName();
+    QDir dir = fileInfo.dir();
+    QString oldFolderName = dir.dirName();
+    dir.cdUp();
+    QString parentPath = dir.absolutePath();
+
+    bool ok;
+    QString newFolderName = QInputDialog::getText(parent, "[Rename Folder]", "please new folder name:", QLineEdit::Normal, oldFolderName, &ok);
+
+    if (ok && !newFolderName.isEmpty()) {
+        QString o = QDir::cleanPath(parentPath + QDir::separator() + oldFolderName);
+        QString n = QDir::cleanPath(parentPath + QDir::separator() + newFolderName);
+       // ui_imageView[0]->movieStop();
+       // ui_imageView[1]->movieStop();
+        if (fileInfo.dir().rename(o, n)) {
+            return QDir::cleanPath(n + QDir::separator() + fileName);
+        }
+        else {
+            QMessageBox::warning(parent, "warning", "can not rename.");
+        }
+    }
+    return QString();
 }

@@ -34,8 +34,14 @@ TextViewContainer::TextViewContainer(QWidget* parent)
 
 	// 슬라이더 값 변경 시 정보를 업데이트하는 람다 슬롯 연결
 	connect(ui_QSlider, &QSlider::valueChanged, this, [this](int value) {
-		int newVal = setPage(&m_fileInfo, value);
-		ui_QSliderInfo->setText(QString("page: %1 / %2").arg(newVal).arg(ui_QSlider->maximum()));
+		ui_QSliderInfo->setText(QString("page: %1 / %2").arg(value+1).arg(ui_QSlider->maximum()));
+
+		if (m_fileInfo.currentPageIdx == value) {
+			return;
+		}
+		else {
+			setPage(&m_fileInfo, value);
+		}
 		});
 
 }
@@ -104,18 +110,18 @@ bool TextViewContainer::isUtf8Text(QByteArray& data) {
 }
 
 void TextViewContainer::initTextFile(QString filePath, FileUtils::MoveMode moveMode) {
-	QList<FileUtils::SzViewerFile> files = FileUtils::extractFileListBy(filePath , moveMode, FileUtils::TEXT, false);
+	QList<FileUtils::SzViewerFile> files = FileUtils::extractFileListBy(filePath, moveMode, FileUtils::TEXT, false);
 
 	if (files.size() != 1) {
 		return;
 	}
-	
+
 	FileUtils::SzViewerFile file = files.at(0);
 
 	this->window()->setWindowTitle(QString("SzViewer - %1").arg(file.fileName));
 	m_fileInfo = TextViewContainer::TextFileInfo();
 
-	if (file.isArchive) {
+	if (file.isArchive && !file.archiveName.isEmpty()) {
 		StatusStore::instance().getTextHistory().addFileInfo(file.archiveName, -1, "");
 	}
 
@@ -128,7 +134,7 @@ void TextViewContainer::initTextFile(QString filePath, FileUtils::MoveMode moveM
 	else {
 		m_fileInfo.text = QString::fromLocal8Bit(file.fileDataCache);
 	}
-
+	m_fileInfo.zipFileName = file.archiveName;
 	m_fileInfo.fileName = file.fileName;
 	m_fileInfo.currentPageIdx = 0;
 	refreshPage(history.textPosition);
@@ -143,16 +149,9 @@ void TextViewContainer::refreshPage(long textPosition) {
 		currentPage = currentPage - (currentPage % M_TEXT_BROWSER_CNT);
 	}
 	m_fileInfo.currentPageIdx = currentPage;
-	ui_QSlider->setRange(0, m_fileInfo.pageInfos.size() - 1);
-	ui_QSlider->setValue(0);
-
-	if (currentPage == 0) {
-		int newVal = setPage(&m_fileInfo, currentPage);
-		ui_QSliderInfo->setText(QString("page: %1 / %2").arg(newVal).arg(ui_QSlider->maximum()));
-	}
-	else {
-		ui_QSlider->setValue(currentPage);
-	}
+	ui_QSlider->setMaximum(m_fileInfo.pageInfos.size());
+	ui_QSliderInfo->setText(QString("page: %1 / %2").arg(currentPage+1).arg(ui_QSlider->maximum()));
+	int newVal = setPage(&m_fileInfo, currentPage);
 
 	this->window()->activateWindow();
 	this->window()->raise();
@@ -178,7 +177,7 @@ void TextViewContainer::findPage(const QString& text, long page, long line) {
 		browserIndex = (page % 2);
 	}
 
-	ui_QSlider->setValue(page - browserIndex);
+	setPage(&m_fileInfo, page - browserIndex);
 
 	QTextCursor cursor(ui_TextBrowsers[browserIndex]->document());
 	cursor = ui_TextBrowsers[browserIndex]->document()->find(text, cursor);
@@ -242,7 +241,7 @@ void TextViewContainer::applyLineSpacing(QTextBrowser* tb) {
 */
 
 void TextViewContainer::saveHistory(HistoryProps& history, const TextFileInfo* fileInfo) {
-	if (!fileInfo->fileName.isEmpty()) {
+	if (!fileInfo->fileName.isEmpty() && fileInfo->zipFileName.isEmpty()) {
 		history.addFileInfo(fileInfo->fileName, fileInfo->pageInfos.value(fileInfo->currentPageIdx).firstPosition, "");
 	}
 }
@@ -275,6 +274,10 @@ bool TextViewContainer::eventFilter(QObject* watched, QEvent* event) {
 		else if (keyEvent->key() == Qt::Key_Delete && !m_fileInfo.fileName.isEmpty()) {
 			deleteFile(&m_fileInfo);
 		}
+		else if (keyEvent->key() == Qt::Key_F2 && !m_fileInfo.fileName.isEmpty()) {
+			QString fileName = m_fileInfo.zipFileName.isEmpty() ? m_fileInfo.fileName : m_fileInfo.zipFileName;
+			emit renameFile(fileName);
+		}
 		return false;  // 이벤트를 가로채서 처리 완료
 	}
 
@@ -298,12 +301,20 @@ bool TextViewContainer::eventFilter(QObject* watched, QEvent* event) {
 
 void TextViewContainer::deleteFile(const TextFileInfo* fileInfo) {
 	QStringList files;
-	files.append(fileInfo->fileName);
+	if (fileInfo->fileName.isEmpty()) {
+		return;
+	}
+	else if (FileUtils::isArchivePath(fileInfo->fileName)) {
+		files.append(fileInfo->zipFileName);
+	}
+	else {
+		files.append(fileInfo->fileName);
+	}
 
-	emit deleteKeyPressed(files);
+	emit deleteKeyPressed(files, FileUtils::TEXT);
 }
 
-void TextViewContainer::nextPage(const TextFileInfo* fileInfo) {
+void TextViewContainer::nextPage(TextFileInfo* fileInfo) {
 	int nextPosition = fileInfo->currentPageIdx;
 	bool isSplitView = StatusStore::instance().getTextSettings().isSplitView();
 
@@ -312,16 +323,16 @@ void TextViewContainer::nextPage(const TextFileInfo* fileInfo) {
 
 	if (nextPosition >= fileInfo->pageInfos.size()) {
 		if (StatusStore::instance().getTextSettings().isAutoNext()) {
-			initTextFile(m_fileInfo.fileName, FileUtils::Next);
+			initTextFile(fileInfo->fileName, FileUtils::Next);
 			return;
 		}
 		return;
 	}
 
-	ui_QSlider->setValue(nextPosition);
+	setPage(fileInfo, nextPosition);
 }
 
-void TextViewContainer::prevPage(const TextFileInfo* fileInfo) {
+void TextViewContainer::prevPage(TextFileInfo* fileInfo) {
 	int prevPosition = fileInfo->currentPageIdx;
 	bool isSplitView = StatusStore::instance().getTextSettings().isSplitView();
 
@@ -336,7 +347,7 @@ void TextViewContainer::prevPage(const TextFileInfo* fileInfo) {
 		prevPosition = 0;
 	}
 
-	ui_QSlider->setValue(prevPosition);
+	setPage(fileInfo, prevPosition);
 }
 
 bool TextViewContainer::changeSplitView() {
@@ -380,6 +391,7 @@ int TextViewContainer::setPage(TextFileInfo* fileInfo, int newPageIdx) {
 	}
 
 	saveHistory(StatusStore::instance().getTextHistory(), fileInfo);
+	ui_QSlider->setValue(newPageIdx);
 
 	return newPageIdx;
 	//testText();
@@ -423,28 +435,6 @@ QHash<long, TextViewContainer::PageInfo> TextViewContainer::calculatePage(const 
 
 	return textPages;
 }
-/*
-void TextViewContainer::testText() {
-
-	PageInfo p = m_fileInfo.pageInfos.value(m_fileInfo.currentPageIdx);
-	QFontMetrics fm(ui_TextBrowsers[0]->font());
-	int width = 0;
-
-	for (int i = 0; i < p.lines.size(); i++) {
-		int width = 0;
-		for (int j = 0; j < p.lines.at(i).length(); j++) {
-			QChar c = p.lines.at(i).at(j);
-			int w = getFontWidth(&fm, c);
-			width += w;
-			qDebug() << QString(c) << " : " << w;
-		}
-		qDebug() << "----------------- " << getMaxWidth(ui_TextBrowsers[0]);
-		qDebug() << p.lines.at(i);
-		qDebug() << "line width: " << width << " , w2 : " << fm.horizontalAdvance(p.lines.at(i));
-	}
-
-
-}*/
 
 
 int TextViewContainer::getFontWidth(QFontMetrics* fm, QChar c) {
@@ -478,7 +468,7 @@ int TextViewContainer::getMaxWidth(QTextBrowser* tb) {
 
 
 
-const TextViewContainer::TextFileInfo* TextViewContainer::getFileInfo() {
+TextViewContainer::TextFileInfo* TextViewContainer::getFileInfo() {
 	return &m_fileInfo;
 }
 

@@ -2,6 +2,9 @@
 #define FILEUTILS_H
 #include <QStringList>
 #include "ZipArchiveManager.h"
+#include <QInputDialog>
+#include < QLineEdit>
+#include <QMessageBox>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -33,7 +36,8 @@ public:
 		NextFolder,
 		Prev,
 		First,
-		PrevFolder
+		PrevFolder,
+		PrevFolderLastFile
 	};
 
 	enum SupportType {
@@ -53,6 +57,10 @@ public:
 	static void moveFolderToTrash(QString folderPath);
 	static bool isArchivePath(QString filePath);
 	static QList<FileUtils::SzViewerFile> extractFileListBy(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage = false);
+	static QList<FileUtils::SzViewerFile> extractFileInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage);
+	static QList<FileUtils::SzViewerFile> extractArchiveInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage);
+	static QString renameFile(QString currentFile, QWidget* parent);
+	static QString renameFolder(QString currentFile, QWidget* parent);
 };
 
 #endif 

@@ -5,6 +5,7 @@ DeleteFilesDialog::DeleteFilesDialog(const QStringList& files, bool isFolder, QW
 	m_okButton(new QPushButton("Confirm", this)), m_cancelButton(new QPushButton("Cancel", this))
 {
     setWindowTitle("Delete File");
+    resize(800, 300); // 창 크기 설정
 
     // 파일 목록을 QListWidget에 추가하고 각 항목에 체크박스를 설정
     for (const QString& file : files) {
@@ -42,20 +43,30 @@ QStringList DeleteFilesDialog::getSelectedFiles() const {
     return selectedFiles;
 }
 
+QStringList DeleteFilesDialog::getDeletedFiles() const {
+	return m_deletedFiles;
+}
+
 bool DeleteFilesDialog::isDeleteFolderChecked() const {
     return m_deleteFolderCheckBox->isChecked();
 }
 
 void DeleteFilesDialog::deleteFileOrFolder() {
-	
+	m_deletedFiles.clear();
+
     QStringList selectedFiles = getSelectedFiles();
     if (isDeleteFolderChecked()) {
         QString folderPath = QFileInfo(m_fileListWidget->item(0)->text()).absolutePath();
         FileUtils::moveFolderToTrash(folderPath);
-
+        if (!QDir(folderPath).exists()) {
+            m_deletedFiles.append(folderPath);
+        }
     } else {
         for (const QString& file : selectedFiles) {
             FileUtils::moveToTrash(file);
+			if (!QFile(file).exists()) {
+				m_deletedFiles.append(file);
+			}
         }
     }
 

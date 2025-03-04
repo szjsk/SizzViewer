@@ -26,5 +26,8 @@
         <file>resources/icon/rotate_left_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
         <file>resources/icon/rotate_right_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
         <file>resources/icon/screen_rotation_alt_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/compare_arrows_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/swap_horiz_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
+        <file>resources/icon/switch_access_2_24dp_1F1F1F_FILL0_wght400_GRAD0_opsz24.svg</file>
     </qresource>
 </RCC>
