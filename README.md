@@ -95,10 +95,12 @@
 - 텍스트 뷰어 전환
 - about
 
-- 
 ## Third Party Libraries
+[Qt 6.8.2 : https://www.qt.io/download-open-source ] 
+
 [Icon  : https://fonts.google.com/icons ] 
 - Material Design Icons by Google Licensed under the Apache License 2.0
 
 [압축파일]
-- miniz (Public Domain) - Compression library
+- miniz (Public Domain - Unlicense) - Compression library
+
