@@ -58,6 +58,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     const QString aboutText = R"(
         <p><b>작성자</b> : szJs<br>
         <b>이메일</b> : <a href="mailto:sizz.js@gmail.com">sizz.js@gmail.com</a></p></br>
+        <b>사이트</b> : https://github.com/szjsk/SizzViewer</br>
         <p><b>Third Party Libraries</b><br>
         <b>Qt 6.8.2 </b><br>
         <b>Icons</b><br>
