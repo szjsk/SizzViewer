@@ -21,7 +21,7 @@
 #include "ImageSettingProps.h"
 #include "../common/StatusStore.h"
 #include "../common/FileUtils.h"
-
+#include "../filecontrol/FileWindowContainer.h"
 class ImageViewContainer : public QWidget
 {
     Q_OBJECT
@@ -58,6 +58,7 @@ signals:
 	void deleteKeyPressed(QStringList files, FileUtils::SupportType type);
 	void renameFile(QString file);
 	void renameFolder(QString file);
+	void appendFileControl(int keyEvent, QString fileName);
 
 private:
 	QHBoxLayout* createSlider();

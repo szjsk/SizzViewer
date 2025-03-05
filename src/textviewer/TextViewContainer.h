@@ -77,6 +77,7 @@ signals:
     void deleteKeyPressed(QStringList files, FileUtils::SupportType type);
 	void searchResultReady(QString searchText, long page, int line);
     void renameFile(QString file);
+    void appendFileControl(int keyEvent, QString fileName);
 
     //variable
 private:

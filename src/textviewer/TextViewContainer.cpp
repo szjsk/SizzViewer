@@ -278,6 +278,9 @@ bool TextViewContainer::eventFilter(QObject* watched, QEvent* event) {
 			QString fileName = m_fileInfo.zipFileName.isEmpty() ? m_fileInfo.fileName : m_fileInfo.zipFileName;
 			emit renameFile(fileName);
 		}
+		else if (keyEvent->key() == Qt::Key_F5 || keyEvent->key() == Qt::Key_F6 || keyEvent->key() == Qt::Key_F7 || keyEvent->key() == Qt::Key_F8) {
+			emit appendFileControl(keyEvent->key(), m_fileInfo.fileName);
+		}
 		return false;  // 이벤트를 가로채서 처리 완료
 	}
 

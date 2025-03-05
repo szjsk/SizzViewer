@@ -12,6 +12,7 @@
 #include "common/HistoryCheckBoxItem.h"
 #include "common/FileUtils.h"
 #include "common/ZipArchiveManager.h"
+#include "filecontrol/FileWindowContainer.h"
 
 #include <QStackedWidget>
 #include <QSettings>
@@ -56,4 +57,5 @@ private:
     QStackedWidget* ui_stackedWidget;
     TextToolBar* ui_textToolBar;
     ImageToolBar* ui_imageToolBar;
+    FileWindowContainer* ui_fileControl;
 };

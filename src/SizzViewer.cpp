@@ -11,6 +11,12 @@ SizzViewer::SizzViewer(QWidget* parent)
 	QRect geom = settings.value("geometry", QRect(100, 100, 1024, 768)).toRect();
 	setGeometry(geom);
 
+	ui_fileControl = new FileWindowContainer(this);
+	ui_fileControl->setWindowFlags(
+		Qt::Window |                    // 독립된 창으로 설정
+		Qt::WindowMinMaxButtonsHint |   // 최소화/최대화 버튼 추가
+		Qt::WindowCloseButtonHint       // 닫기 버튼 추가
+	);
 	ui_stackedWidget = new QStackedWidget(this);
 
 	ui_textViewContainer = new TextViewContainer(this);
@@ -19,6 +25,12 @@ SizzViewer::SizzViewer(QWidget* parent)
 	connect(ui_textViewContainer, &TextViewContainer::renameFile, this, [this](QString fileName) {
 		openFile(FileUtils::renameFile(fileName, this));
 		});
+	connect(ui_textViewContainer, &TextViewContainer::appendFileControl, this, [this](int keyEvent, QString fileName) {
+
+		ui_fileControl->appendFile(keyEvent, fileName);
+		ui_fileControl->show(); // 모달리스 방식으로 표시
+		});
+
 
 	ui_imageViewContainer = new ImageViewContainer(this);
 	ui_stackedWidget->addWidget(ui_imageViewContainer);
@@ -28,6 +40,12 @@ SizzViewer::SizzViewer(QWidget* parent)
 		});
 	connect(ui_imageViewContainer, &ImageViewContainer::renameFolder, this, [this](QString folderName) {
 		openFile(FileUtils::renameFolder(folderName, this));
+		});
+
+	connect(ui_imageViewContainer, &ImageViewContainer::appendFileControl, this, [this](int keyEvent, QString fileName) {
+
+		ui_fileControl->appendFile(keyEvent, fileName);
+		ui_fileControl->show(); // 모달리스 방식으로 표시
 		});
 
 	this->setCentralWidget(ui_stackedWidget);
@@ -80,7 +98,7 @@ void SizzViewer::handleDeleteKey(QStringList files, FileUtils::SupportType type)
 			m_deleteFolder = dialog.isDeleteFolderChecked();
 			openFile(nextFolder.isEmpty() ? prevFolder : nextFolder);
 		}
-		else if(!deletedData.isEmpty()){
+		else if (!deletedData.isEmpty()) {
 			//deletedData는 파일 정렬 순서대로 삭제되어 넘어온다. last index가 마지막 삭제된 파일.
 			//다음 파일이 존재하면 다음 파일로 이동 
 			int nextIdx = fileList.indexOf(deletedData.at(deletedData.size() - 1)) + 1;

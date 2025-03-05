@@ -93,6 +93,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\filecontrol\FileWindowIWidget.cpp" />
+    <ClCompile Include="src\filecontrol\FileWindowContainer.cpp" />
     <ClCompile Include="src\common\HistoryCheckBoxItem.cpp" />
     <ClCompile Include="src\common\FileUtils.cpp" />
     <ClCompile Include="src\AboutDialog.cpp" />
@@ -121,6 +123,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="src\filecontrol\FileWindowIWidget.h" />
+    <QtMoc Include="src\filecontrol\FileWindowContainer.h" />
     <ClInclude Include="src\common\ZipArchiveManager.h" />
     <ClInclude Include="src\thirdparty\miniz\miniz.h" />
     <QtMoc Include="src\common\DeleteFilesDialog.h" />
