@@ -61,12 +61,25 @@ void DeleteFilesDialog::deleteFileOrFolder() {
         if (!QDir(folderPath).exists()) {
             m_deletedFiles.append(folderPath);
         }
+        else {
+            QMessageBox::warning(this, "warning", "can not delete  " + folderPath);
+        }
     } else {
         for (const QString& file : selectedFiles) {
             FileUtils::moveToTrash(file);
 			if (!QFile(file).exists()) {
 				m_deletedFiles.append(file);
-			}
+            }
+            else {
+                QMessageBox::StandardButton reply = QMessageBox::question(this,
+                    "Warning",
+                    "Can not delete " + file + "\nDo you want to continue?",
+                    QMessageBox::Yes | QMessageBox::No);
+
+                if (reply == QMessageBox::No) {
+                    break;
+                }
+            }
         }
     }
 

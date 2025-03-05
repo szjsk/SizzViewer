@@ -11,14 +11,22 @@ SizzViewer::SizzViewer(QWidget* parent)
 	QRect geom = settings.value("geometry", QRect(100, 100, 1024, 768)).toRect();
 	setGeometry(geom);
 
+	// 파일 컨트롤 창 생성
 	ui_fileControl = new FileWindowContainer(this);
 	ui_fileControl->setWindowFlags(
 		Qt::Window |                    // 독립된 창으로 설정
 		Qt::WindowMinMaxButtonsHint |   // 최소화/최대화 버튼 추가
 		Qt::WindowCloseButtonHint       // 닫기 버튼 추가
 	);
-	ui_stackedWidget = new QStackedWidget(this);
 
+	connect(ui_fileControl, &FileWindowContainer::onItemDoubleClicked,
+		this, [this](int index, const QString& fileName) {
+			openFile(fileName);
+		});
+
+	// 스택 위젯 생성
+	ui_stackedWidget = new QStackedWidget(this);
+	// 텍스트 뷰어 위젯 생성
 	ui_textViewContainer = new TextViewContainer(this);
 	ui_stackedWidget->addWidget(ui_textViewContainer);
 	connect(ui_textViewContainer, &TextViewContainer::deleteKeyPressed, this, &SizzViewer::handleDeleteKey);
@@ -31,7 +39,7 @@ SizzViewer::SizzViewer(QWidget* parent)
 		ui_fileControl->show(); // 모달리스 방식으로 표시
 		});
 
-
+	// 이미지 뷰어 위젯 생성
 	ui_imageViewContainer = new ImageViewContainer(this);
 	ui_stackedWidget->addWidget(ui_imageViewContainer);
 	connect(ui_imageViewContainer, &ImageViewContainer::deleteKeyPressed, this, &SizzViewer::handleDeleteKey);
@@ -53,6 +61,7 @@ SizzViewer::SizzViewer(QWidget* parent)
 	// 드래그 앤 드롭 활성화
 	setAcceptDrops(true);
 
+	// 툴바 생성 - 공통 left 툴바, 텍스트 툴바, 이미지 툴바, 공통 right 툴바
 	QToolBar* leftToolBar = CommonLeft();
 	ui_textToolBar = new TextToolBar(this, ui_textViewContainer);
 	ui_imageToolBar = new ImageToolBar(this, ui_imageViewContainer);
@@ -255,17 +264,19 @@ void SizzViewer::changeVisible(bool isCurrentTextView) {
 
 void SizzViewer::openFileDialog()
 {
-	if (ui_textViewContainer->isVisible()) {
-		QString fileName = QFileDialog::getOpenFileName(this, "Open File",
-			QDir::currentPath(), "Text Files (*.txt)");
-		openFile(fileName);
+	QStringList supportFiles;
+	supportFiles.append(FileUtils::getSupportFiles(FileUtils::SupportType::IMAGE));
+	supportFiles.append(FileUtils::getSupportFiles(FileUtils::SupportType::TEXT));
+	supportFiles.append(FileUtils::getSupportFiles(FileUtils::SupportType::ZIP));
+	// 파일 필터 생성
+	QString filter = "All Supported Files (";
+	for (const QString& suffix : supportFiles) {
+		filter += "*." + suffix + " ";
 	}
-	else {
-		QString fileName = QFileDialog::getOpenFileName(this, "Open File",
-			QDir::currentPath(), "Image Files (*.jpg *.jpeg *.png *.bmp *.gif *.webp)");
+	filter = filter.trimmed() + ")";
 
-		openFile(fileName);
-	}
+	QString fileName = QFileDialog::getOpenFileName(this, "Open File",QDir::currentPath(), filter);
+	openFile(fileName);  
 
 }
 

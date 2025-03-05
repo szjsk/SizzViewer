@@ -4,7 +4,7 @@
 
 #include <QDialog>
 #include <QVBoxLayout>
-#include "FileWindowIWidget.h"
+#include "FileWindowWidget.h"
 #include <QSettings>
 #include <QScreen>
 #include <QApplication>
@@ -18,12 +18,15 @@ public:
     explicit FileWindowContainer(QWidget* parent = nullptr);
     ~FileWindowContainer();
     void addTableWidget();
-    FileWindowIWidget* getTableWidget(int index);
+    FileWindowWidget* getTableWidget(int index);
 	void appendFile(int keyEvent, QString fileName);
+
+signals:
+    void onItemDoubleClicked(int index, const QString& fileName); 
 
 private:
     QVBoxLayout* ui_mainLayout;
-    QList<FileWindowIWidget*> ui_tableWidgets;
+    QList<FileWindowWidget*> ui_tableWidgets;
 };
 
 #endif // FILEWINDOWCONTAINER_H

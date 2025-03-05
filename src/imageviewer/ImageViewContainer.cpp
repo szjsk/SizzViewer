@@ -287,6 +287,7 @@ bool ImageViewContainer::eventFilter(QObject* watched, QEvent* event) {
 		}
 		else if (keyEvent->key() == Qt::Key_F5 || keyEvent->key() == Qt::Key_F6 || keyEvent->key() == Qt::Key_F7 || keyEvent->key() == Qt::Key_F8) {
 			emit appendFileControl(keyEvent->key(), m_imageInfo[0].fileName);
+			navigate(FileUtils::Next);
 		}
 
 		return false;

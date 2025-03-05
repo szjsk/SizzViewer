@@ -30,23 +30,31 @@ QStringList FileUtils::getFileList(QString currentFile, SupportType type) {
 	return newFileBySupprot;
 }
 
+QStringList FileUtils::getSupportFiles(SupportType type) {
+    QStringList supportFiles;
+    // 이미지 파일
+	if (type == SupportType::IMAGE) {
+		supportFiles << "jpg" << "jpeg" << "png" << "bmp" << "gif" << "webp"
+			<< "tiff" << "tif" << "svg" << "icns" << "ico" << "tga" << "wbmp";
+	}
+	else if (type == SupportType::TEXT) {
+		supportFiles << "txt";
+	}
+	else if (type == SupportType::ZIP) {
+		supportFiles << "zip";
+	}
+	return supportFiles;
+}
+
 bool FileUtils::isSupportSuffix(QString currentFile, SupportType type) {
     QFileInfo fileInfo(currentFile);
 
     QString suffix = fileInfo.suffix().toLower();
+	QStringList suppSuffix = getSupportFiles(type);
 
-    if (type == SupportType::IMAGE && (suffix == "jpg" || suffix == "jpeg" || suffix == "png" || suffix == "bmp" || suffix == "gif" || suffix == "webp"
-		|| suffix == "tiff" || suffix == "tif" || suffix == "svg" || suffix == "icns" || suffix == "ico" || suffix == "tga" || suffix == "wbmp"
-		)) {
+    if (suppSuffix.indexOf(suffix) > - 1) {
 		return true;
 	}
-	else if (type == SupportType::TEXT && (suffix == "txt")) {
-		return true;
-	}
-    else if (type == SupportType::ZIP && (suffix == "zip")) {
-        return true;
-    }
-
     return false;
 }
 
@@ -384,7 +392,7 @@ QString FileUtils::renameFile(QString currentFile, QWidget* parent) {
             return newPath;
         }
         else {
-            QMessageBox::warning(parent, "warning", "can not rename.");
+            QMessageBox::warning(parent, "warning", "can not rename." + currentFile);
         }
     }
     return QString();
@@ -411,7 +419,7 @@ QString FileUtils::renameFolder(QString currentFile, QWidget* parent) {
             return QDir::cleanPath(n + QDir::separator() + fileName);
         }
         else {
-            QMessageBox::warning(parent, "warning", "can not rename.");
+            QMessageBox::warning(parent, "warning", "can not rename. "+ newFolderName);
         }
     }
     return QString();

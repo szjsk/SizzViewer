@@ -60,7 +60,7 @@ public:
 	static QString renameFolder(QString currentFile, QWidget* parent);
 	static void setAddEmptyPage(bool isImageFirstEmpty);
 	static bool isAddEmptyPage();
-
+	static QStringList getSupportFiles(SupportType type);
 
 private:
 	static QList<FileUtils::viewerFile> extractFileInfos(QString filePath, FileUtils::MoveMode moveMode, FileUtils::SupportType type, bool isPairPage);

@@ -1,6 +1,5 @@
-﻿// HistoryTableWidget.h
-#ifndef HISTORYTABLEWIDGET_H
-#define HISTORYTABLEWIDGET_H
+﻿#ifndef FILEWINDOWWIDGET_H
+#define FILEWINDOWWIDGET_H
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -9,14 +8,17 @@
 #include <QListWidget>
 #include <QFileDialog>
 #include <QLineEdit>
+#include <QMessageBox>
+#include <QRegularExpression>
 #include "../common/HistoryCheckBoxItem.h"
+#include "../common/FileUtils.h"
 
-class FileWindowIWidget : public QWidget
+class FileWindowWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FileWindowIWidget(QWidget* parent = nullptr);
+    explicit FileWindowWidget(QWidget* parent = nullptr);
     void addItem(const QString& text, bool checked = false);
     void clear();
 	void clearLineEditText();
@@ -24,25 +26,22 @@ public:
 signals:
     void folderMoved(const QString& newPath);
     void itemRenamed(const QString& oldName, const QString& newName);
-    void itemDeleted(const QString& name);
+	void onItemDoubleClick(const QString& fileName);
 
 private slots:
     void onMoveFolder();
     void onRename();
-    void onDelete();
 
 private:
     void setupUI();
-
+    void sortItems();
+    QList<QListWidgetItem*> getCheckedItem();
+    bool hasRenameSpecialChar(QString pattern);
+    void setLineText(QString text, QString color);
     QListWidget* ui_listWidget;
-    QPushButton* ui_selectedToggle;
-    QPushButton* ui_btnMoveFolder;
-    QPushButton* ui_btnRename;
-    QPushButton* ui_btnDelete;
-    QPushButton* ui_btnClear;
     QLineEdit* ui_lineEdit;
 
 	bool m_isSelectedAll = false;
 };
 
-#endif // HISTORYTABLEWIDGET_H
+#endif // FILEWINDOWWIDGET_H

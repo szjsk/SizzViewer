@@ -15,10 +15,8 @@ FileWindowContainer::FileWindowContainer(QWidget* parent)
     if (!screenGeometry.contains(geom.topLeft()) || !screenGeometry.contains(geom.bottomRight())) {
         QPoint parentPos = parent->mapToGlobal(QPoint(0, 0)); // 부모 위젯의 전역 좌표
 
-        // 부모 위젯의 왼쪽에 위치시키기
         int x = parentPos.x() - geom.width();
 
-        // 화면 왼쪽 경계를 벗어나면 부모 위젯의 오른쪽에 배치
         if (x < screenGeometry.left()) {
             x = parentPos.x() + parent->width();
         }
@@ -34,24 +32,32 @@ FileWindowContainer::FileWindowContainer(QWidget* parent)
 
     ui_mainLayout = new QVBoxLayout(this);
 
-    FileWindowIWidget* widgetf5 = new FileWindowIWidget(this);
+    FileWindowWidget* widgetf5 = new FileWindowWidget(this);
     ui_tableWidgets.append(widgetf5);
     ui_mainLayout->addWidget(widgetf5);
-    FileWindowIWidget* widgetf6 = new FileWindowIWidget(this);
+    FileWindowWidget* widgetf6 = new FileWindowWidget(this);
     ui_tableWidgets.append(widgetf6);
     ui_mainLayout->addWidget(widgetf6);
 
-    FileWindowIWidget* widgetf7 = new FileWindowIWidget(this);
+    FileWindowWidget* widgetf7 = new FileWindowWidget(this);
     ui_tableWidgets.append(widgetf7);
     ui_mainLayout->addWidget(widgetf7);
 
 
-    FileWindowIWidget* widgetf8 = new FileWindowIWidget(this);
+    FileWindowWidget* widgetf8 = new FileWindowWidget(this);
     ui_tableWidgets.append(widgetf8);
     ui_mainLayout->addWidget(widgetf8);
 
 
     setLayout(ui_mainLayout);
+
+    for (int i = 0; i < ui_tableWidgets.size(); i++) {
+        connect(ui_tableWidgets[i], &FileWindowWidget::onItemDoubleClick,
+            this, [this, i](const QString& fileName) {
+                emit onItemDoubleClicked(i, fileName);
+            });
+    }
+
 }
 
 FileWindowContainer::~FileWindowContainer()
@@ -60,7 +66,7 @@ FileWindowContainer::~FileWindowContainer()
     settings.setValue("geometry", this->geometry());
 }
 
-FileWindowIWidget* FileWindowContainer::getTableWidget(int index)
+FileWindowWidget* FileWindowContainer::getTableWidget(int index)
 {
     if (index >= 0 && index < ui_tableWidgets.size()) {
         return ui_tableWidgets[index];
@@ -80,20 +86,20 @@ void FileWindowContainer::appendFile(int keyEvent, QString fileName)
 
     if (keyEvent == Qt::Key_F5) {
 		qDebug() << "F5 : " << fileName;
-		ui_tableWidgets[0]->addItem(fileName, false);
+		ui_tableWidgets[0]->addItem(fileName, true);
 	}
 	else if (keyEvent == Qt::Key_F6) {
         qDebug() << "F6 : " << fileName;
-		ui_tableWidgets[1]->addItem(fileName, false);
+		ui_tableWidgets[1]->addItem(fileName, true);
 	}
 	else if (keyEvent == Qt::Key_F7) {
         qDebug() << "F7 : " << fileName;
-		ui_tableWidgets[2]->addItem(fileName, false);
+		ui_tableWidgets[2]->addItem(fileName, true);
 	}
     else if (keyEvent == Qt::Key_F8) {
         qDebug() << "F8 : " << fileName;
 
-        ui_tableWidgets[3]->addItem(fileName, false);
+        ui_tableWidgets[3]->addItem(fileName, true);
     }
 
 }

@@ -13,14 +13,21 @@ AboutDialog::AboutDialog(QWidget* parent)
     // - 파일 그룹화 기능 추가 (파일 삭제, 일괄 이름 변경을 위한 그룹)
 
     const QString titleText = R"(
-       <h2>Sizz Viewer 0.4.2 (2025-03-05) </h2>
+       <h2>Sizz Viewer 0.5.0 (2025-03-06) </h2>
     )";
 
     const QString helpText = R"(
+        <p><b>뷰어 단축키</b><br>
+        Del : 파일 삭제<br>
+        F2 : 파일 이름 변경<br>
+        F5 : 1번 임시 파일 북마크 이동<br>
+        F6 : 2번 임시 파일 북마크 이동<br>
+        F7 : 3번 임시 파일 북마크 이동<br>
+        F8 : 4번 임시 파일 북마크 이동<br>
+
         <p><b>텍스트 뷰어 단축키</b><br>
         ← → : 페이지 좌우 이동<br>
         PgUp, PgDn : 폴더내 다음 파일, 이전 파일<br>
-        Del : 파일 삭제<br>
         현재 *.txt 만 지원합니다.<br>
         화면 왼쪽 클릭 : 이전페이지, 화면 오른쪽 클릭 : 다음 페이지<br>
         </p>
@@ -29,7 +36,6 @@ AboutDialog::AboutDialog(QWidget* parent)
         <p><b>이미지 뷰어 단축키</b><br>
         ← → : 이전/다음 파일<br>
         PgUp, PgDn : 이전/다음 폴더<br>
-        Del : 파일 삭제<br>
         1 : 윈도우 맞춤<br>
         2 : 원본 크기<br>
         3 : 가로 맞춤<br>
@@ -38,9 +44,7 @@ AboutDialog::AboutDialog(QWidget* parent)
         + : 확대<br>
         - : 축소<br>
         f : 전체화면/ 전체화면 종료 (esc)<br>
-        F2 : 파일 이름 변경<br>
-        F3 : 분할 보기 파일 이름 변경<br>
-        CTRL + F2 : 폴더 이름 변경<br>
+        F3 : 폴더 이름 변경<br>
         N : 좌우 보기 변경(일본만화)<br>
         M : 이미지 첫 페이지 빈 페이지 추가<br>
         w,a,s,d : 스크롤 이동 (방향키 up/down은 상하 스크롤 많이 이동)
