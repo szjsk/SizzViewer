@@ -1,7 +1,11 @@
 # Sizz Viewer
 - 이름 변경 SzViewer -> Sizz Viewer
 
-## 텍스트뷰어 프로그램 
+- 텍스트 / 이미지 뷰어 프로그램입니다. 
+
+*.txt, *.jpg, *.jpeg, *.png, *.bmp, *.gif, *.webp , *.ico 등 지원합니다.  
+
+zip 파일의 경우 내부 이미지와 텍스트파일이 혼합되어있다면 첫번째파일을 기준으로 열립니다.
 
 ### 이미지 뷰어
 
@@ -24,7 +28,7 @@
 - CTRL + F2 : 폴더 이름 변경
 - N : 좌우 보기 변경(일본만화)
 - M : 이미지 첫 페이지 빈 페이지 추가
-- *.jpg, *.jpeg, *.png, *.bmp, *.gif, *.webp , *.ico 등 지원합니다.  
+
 
 ![SizzViewer Image](resources/readme/sizzviewer-image-1page.png)
 
