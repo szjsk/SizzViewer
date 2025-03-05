@@ -16,6 +16,7 @@
 #include <QInputDialog>
 #include <QApplication>
 #include <QMainWindow>
+#include <QScrollBar>
 #include "ImageView.h"
 #include "ImageSettingProps.h"
 #include "../common/StatusStore.h"
@@ -70,6 +71,7 @@ private: //variable
 	ImageView* ui_imageView[M_IMAGE_BROWSER_CNT];
 	FileUtils::viewerFile m_imageInfo[M_IMAGE_BROWSER_CNT];
 	ImageScale m_imageScale;
+
 };
 
 #endif // IMAGEVIEWCONTAINER_H

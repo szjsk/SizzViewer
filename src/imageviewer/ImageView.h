@@ -9,6 +9,9 @@
 #include <QFileInfo>
 #include <QPainter>
 #include <QBuffer>
+#include <QScrollBar>
+#include <QEvent>
+#include <QKeyEvent>
 
 class ImageView : public QScrollArea
 {
@@ -49,6 +52,9 @@ public:
 	void rotate(int degree, bool isFlip);
 	void setAlignment(Align align);
 
+protected:
+	bool eventFilter(QObject* watched, QEvent* event) override;
+
 private:
 	QPixmap getScaledPixmap(QPixmap* pixmap, QSize originSize, ScaleMode mode, int percentage);
 	QMovie* getScaledQMovie(QMovie* movie, QSize originSize, ScaleMode mode, int percentage);
@@ -57,7 +63,8 @@ private: //variables
 	QScrollArea* ui_scrollArea;
 	QLabel* ui_label;
 	ImageInfo m_imageInfo;
-
+	bool m_isDragging = false;
+	QPoint m_lastPos;
 };
 
 #endif // IMAGEVIEW_H

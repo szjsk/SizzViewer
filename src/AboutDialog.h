@@ -5,6 +5,7 @@
 #include <QString>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QScrollArea>
 
 class AboutDialog : public QDialog
 {

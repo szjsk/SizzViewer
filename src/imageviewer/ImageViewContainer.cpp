@@ -37,7 +37,7 @@ ImageViewContainer::ImageViewContainer(QWidget* parent)
 	// 슬라이더 값 변경 시 정보를 업데이트하는 람다 슬롯 연결
 	connect(ui_qSlider, &QSlider::valueChanged, this, [this](int value) {
 
-		ui_qSliderInfo->setText(QString("count: %1 / %2").arg(value+1).arg(ui_qSlider->maximum()));
+		ui_qSliderInfo->setText(QString("count: %1 / %2").arg(value + 1).arg(ui_qSlider->maximum()));
 
 		if (m_imageInfo[0].currentIndex == value) {
 			return;
@@ -111,7 +111,7 @@ void ImageViewContainer::initImageFile(QString filePath, FileUtils::MoveMode mov
 	}
 	ui_qSlider->setMaximum(files.at(0).size);
 	ui_qSlider->setValue(files.at(0).currentIndex);
-	ui_qSliderInfo->setText(QString("count: %1 / %2").arg(files.at(0).currentIndex+1).arg(ui_qSlider->maximum()));
+	ui_qSliderInfo->setText(QString("count: %1 / %2").arg(files.at(0).currentIndex + 1).arg(ui_qSlider->maximum()));
 
 	this->window()->setWindowTitle(QString("SizzViewer - %1       /        %2").arg(m_imageInfo[0].fileName).arg(m_imageInfo[1].fileName));
 
@@ -286,21 +286,24 @@ bool ImageViewContainer::eventFilter(QObject* watched, QEvent* event) {
 			navigate(FileUtils::None);
 
 		}
-		return false; 
+		return false;
 	}
+
 
 
 	if (event->type() == QEvent::MouseButtonRelease) {
 		QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-		QPoint mousePos = static_cast<QWidget*>(watched)->mapTo(this, mouseEvent->pos());
 
-		int centerX = this->width() / 2;
-
-		if (mousePos.x() < centerX) {
-			navigate(FileUtils::Prev);
-		}
-		else {
-			navigate(FileUtils::Next);
+		if (mouseEvent->button() == Qt::LeftButton) {
+			// 기존 왼쪽 클릭 처리 코드
+			QPoint mousePos = static_cast<QWidget*>(watched)->mapTo(this, mouseEvent->pos());
+			int centerX = this->width() / 2;
+			if (mousePos.x() < centerX) {
+				navigate(FileUtils::Prev);
+			}
+			else {
+				navigate(FileUtils::Next);
+			}
 		}
 	}
 

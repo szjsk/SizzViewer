@@ -13,7 +13,7 @@ AboutDialog::AboutDialog(QWidget* parent)
     // - 파일 그룹화 기능 추가 (파일 삭제, 일괄 이름 변경을 위한 그룹)
 
     const QString titleText = R"(
-       <h2>Sizz Viewer 0.4.0 (2025-03-05) </h2>
+       <h2>Sizz Viewer 0.4.2 (2025-03-05) </h2>
     )";
 
     const QString helpText = R"(
@@ -22,6 +22,7 @@ AboutDialog::AboutDialog(QWidget* parent)
         PgUp, PgDn : 폴더내 다음 파일, 이전 파일<br>
         Del : 파일 삭제<br>
         현재 *.txt 만 지원합니다.<br>
+        화면 왼쪽 클릭 : 이전페이지, 화면 오른쪽 클릭 : 다음 페이지<br>
         </p>
         
 
@@ -42,16 +43,19 @@ AboutDialog::AboutDialog(QWidget* parent)
         CTRL + F2 : 폴더 이름 변경<br>
         N : 좌우 보기 변경(일본만화)<br>
         M : 이미지 첫 페이지 빈 페이지 추가<br>
+        w,a,s,d : 스크롤 이동 (방향키 up/down은 상하 스크롤 많이 이동)
         *.jpg *.jpeg *.png *.bmp *.gif *.webp *.ico *.svg 등을 지원합니다.<br>
-        webp는 지원예정입니다.<br>
+        화면 왼쪽 클릭 : 이전페이지, 화면 오른쪽 클릭 : 다음 페이지<br>
+        마우스 오른쪽 버튼 드래그 : 화면 이동<br>
         </p>
     )";
 
 
     const QString aboutText = R"(
         <p><b>작성자</b> : szJs<br>
-        <b>이메일</b> : <a href="mailto:sizz.js@gmail.com">sizz.js@gmail.com</a></p>
+        <b>이메일</b> : <a href="mailto:sizz.js@gmail.com">sizz.js@gmail.com</a></p></br>
         <p><b>Third Party Libraries</b><br>
+        <b>Qt 6.8.2 </b><br>
         <b>Icons</b><br>
         Material Design Icons by Google - Licensed under the Apache License 2.0<br/>
         <b>miniz</b><br>
@@ -70,7 +74,12 @@ AboutDialog::AboutDialog(QWidget* parent)
     QLabel* labelHelp = new QLabel(helpText, this);
     labelHelp->setTextFormat(Qt::RichText);
     labelHelp->setAlignment(Qt::AlignLeft);
-    layout->addWidget(labelHelp);
+
+    QScrollArea* scrollArea = new QScrollArea(this);
+    scrollArea->setWidget(labelHelp);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFixedHeight(400); // 스크롤 영역의 높이 설정
+    layout->addWidget(scrollArea);
 
     QLabel* labelAbout = new QLabel(aboutText, this);
     labelAbout->setTextFormat(Qt::RichText);

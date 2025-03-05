@@ -15,6 +15,8 @@ ImageView::ImageView(QWidget* parent)
 	ui_label->setContentsMargins(0, 0, 0, 0);  // QLabel의 마진을 0으로 설정
 	ui_label->setFrameStyle(QFrame::NoFrame);
 
+	this->installEventFilter(this);
+
 	this->setWidget(ui_label);
 }
 
@@ -81,6 +83,9 @@ void ImageView::loadImage(QByteArray data, QString fileName, ScaleMode scaleMode
 	}
 	resize(scaleMode, percentage);
 	setAlignment(align);
+	// 스크롤바 위치를 0,0으로 초기화
+	QScrollArea::horizontalScrollBar()->setValue(0);
+	QScrollArea::verticalScrollBar()->setValue(0);
 }
 
 void ImageView::setAlignment(Align align) {
@@ -221,4 +226,80 @@ void ImageView::movieStop() {
 			delete buffer;
 		}*/
 	}
+}
+
+
+bool ImageView::eventFilter(QObject* watched, QEvent* event) {
+
+	if (event->type() == QEvent::KeyRelease) {
+		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+		if (keyEvent->key() == Qt::Key_W) {
+			QScrollBar* vBar = QScrollArea::verticalScrollBar();
+			vBar->setValue(vBar->value() - 20);
+		}
+		else if (keyEvent->key() == Qt::Key_S) {
+			QScrollBar* vBar = QScrollArea::verticalScrollBar();
+			vBar->setValue(vBar->value() + 20);
+		}
+		else if (keyEvent->key() == Qt::Key_A) {
+			QScrollBar* hBar = QScrollArea::horizontalScrollBar();
+			hBar->setValue(hBar->value() - 20);
+		}
+		else if (keyEvent->key() == Qt::Key_D) {
+			QScrollBar* hBar = QScrollArea::horizontalScrollBar();
+			hBar->setValue(hBar->value() + 20);
+		}
+		else if (keyEvent->key() == Qt::Key_Up) {
+			QScrollBar* vBar = QScrollArea::verticalScrollBar();
+			vBar->setValue(vBar->value() - (this->height() * 0.9));
+		}
+		else if (keyEvent->key() == Qt::Key_Down) {
+			QScrollBar* vBar = QScrollArea::verticalScrollBar();
+			vBar->setValue(vBar->value() + (this->height() * 0.9));
+		}
+		return false;
+	}
+
+	// 마우스 오른쪽 버튼 press/move/release 처리
+	if (event->type() == QEvent::MouseButtonPress) {
+		QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+		if (mouseEvent->button() == Qt::RightButton) {
+			m_lastPos = mouseEvent->pos();
+			m_isDragging = true;
+			return true;
+		}
+	}
+	else if (event->type() == QEvent::MouseMove) {
+		QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+		if (m_isDragging) {
+
+			QPoint mousePos = static_cast<QWidget*>(watched)->mapTo(this, mouseEvent->pos());			
+			QPoint delta = mouseEvent->pos() - m_lastPos;
+
+			if (abs(delta.x()) < 2 && abs(delta.y()) < 2) {
+				return true;
+			}
+
+			QScrollBar* hBar = QScrollArea::horizontalScrollBar();
+			QScrollBar* vBar = QScrollArea::verticalScrollBar();
+			if (hBar && hBar->isVisible()) {
+				hBar->setValue(hBar->value() - (delta.x() * 0.9));
+			}
+			if (vBar && vBar->isVisible()) {
+				vBar->setValue(vBar->value() - (delta.y() * 0.9));
+			}
+
+			m_lastPos = mouseEvent->pos();
+			return true;
+		}
+	}
+	else if (event->type() == QEvent::MouseButtonRelease) {
+		QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+		if (mouseEvent->button() == Qt::RightButton) {
+			m_isDragging = false;
+			return true;
+		}
+	}
+	return QWidget::eventFilter(watched, event);
+
 }
